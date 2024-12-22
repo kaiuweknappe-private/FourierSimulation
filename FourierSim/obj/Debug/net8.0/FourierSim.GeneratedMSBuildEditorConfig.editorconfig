@@ -6,6 +6,11 @@ build_property.AvaloniaNameGeneratorFilterByPath = *
 build_property.AvaloniaNameGeneratorFilterByNamespace = *
 build_property.AvaloniaNameGeneratorViewFileNamingStrategy = NamespaceAndClassName
 build_property.AvaloniaNameGeneratorAttachDevTools = true
+build_property.MvvmToolkitEnableINotifyPropertyChangingSupport = true
+build_property._MvvmToolkitIsUsingWindowsRuntimePack = false
+build_property.CsWinRTComponent = 
+build_property.CsWinRTAotOptimizerEnabled = 
+build_property.CsWinRTAotWarningLevel = 
 build_property.TargetFramework = net8.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = 
@@ -22,5 +27,8 @@ build_property.EnableGeneratedComInterfaceComImportInterop =
 [/home/kai/RiderProjects/FourierSim/FourierSim/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/kai/RiderProjects/FourierSim/FourierSim/Views/MainWindow.axaml]
+[/home/kai/RiderProjects/FourierSim/FourierSim/Views/MainWindowView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[/home/kai/RiderProjects/FourierSim/FourierSim/Views/ShapeAnalyzerView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

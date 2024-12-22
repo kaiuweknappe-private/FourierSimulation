@@ -3,7 +3,12 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="FourierSim/App.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/ViewModels/Resources1.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/ViewModels/ShapeAnalyzer.axaml" value="FourierSim/FourierSim.csproj" />
         <entry key="FourierSim/Views/MainWindow.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/Views/MainWindowView.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/Views/ShapeAnalyzerView.axaml" value="FourierSim/FourierSim.csproj" />
       </map>
     </option>
   </component>

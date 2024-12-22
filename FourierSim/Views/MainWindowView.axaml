@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FourierSim.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:interactivity="using:Avalonia.Xaml.Interactivity"
+        xmlns:models="clr-namespace:FourierSim.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Height="700" Width="1000"
+        x:Class="FourierSim.Views.MainWindowView"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="FourierSim">
+    
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Height="40" Background="Gray" >
+            <Menu.Items>
+                <Label>hi</Label>
+            </Menu.Items>
+            <Button HorizontalAlignment="Center" Content="switch view" Command="{Binding SwitchViewCommand}" CommandParameter="ShapeAnalyzer" />
+        </Menu>
+        <ContentControl Content="{Binding CurrentViewModel}"/>
+    </DockPanel>
+
+</Window>

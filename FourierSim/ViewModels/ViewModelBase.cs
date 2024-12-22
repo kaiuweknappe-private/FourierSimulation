@@ -4,4 +4,5 @@ namespace FourierSim.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
+    
 }

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace FourierSim.Views;
 
-public partial class MainWindow : Window
+public partial class ShapeAnalyzerView : UserControl
 {
-    public MainWindow()
+    public ShapeAnalyzerView()
     {
         InitializeComponent();
     }
