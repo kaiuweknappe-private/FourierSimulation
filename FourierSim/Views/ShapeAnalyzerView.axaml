@@ -3,7 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:FourierSim.ViewModels"
-             xmlns:models="clr-namespace:FourierSim.Models"
+             xmlns:controls="clr-namespace:FourierSim.Controls"
+             xmlns:behaviours="clr-namespace:FourierSim.Behaviours"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FourierSim.Views.ShapeAnalyzerView"
              x:DataType="vm:ShapeAnalyzerViewModel">
@@ -19,10 +20,10 @@
                                   StrokeThickness="2" 
                                   IsVisible="{Binding IsDrawingVisible}" />
                         <!--<Polyline Points="{Binding UniPoints}" Stroke="Red" StrokeThickness="1" />-->
-                        <models:PointCollectionControl Points="{Binding UniPoints}" PointBrush="Red" PointSize="4" />
+                        <controls:PointCollectionControl Points="{Binding ResampledPoints}" IsVisible="{Binding IsResampleVisible}" PointBrush="Red" PointSize="4" />
                         
                         <Interaction.Behaviors>
-                            <models:CanvasDrawingHandler
+                            <behaviours:CanvasDrawingHandler
                                 StartCommand="{Binding StartDrawingCommand}"
                                 MoveCommand="{Binding UpdateDrawingCommand}"
                                 StopCommand="{Binding FinishDrawingCommand}" />
@@ -30,19 +31,33 @@
                         </Canvas>
                     </Grid>
                     <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray">
-                        <DockPanel>
-                            <CheckBox IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
-                            <DockPanel>
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0">
+                                <CheckBox IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
+                                <CheckBox IsChecked="{Binding IsResampleVisible}" Content="Show Resampled Points"/>
+                            </StackPanel>
+                            <DockPanel Grid.Column="1">
                                 <Label DockPanel.Dock="Top" HorizontalAlignment="Center" Content="{Binding Value, ElementName=SampleDensitySlider, StringFormat='Sample Density: {0:F2}'}"/>
                                 <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="SampleDensitySlider" Value="{Binding SampleDensity}" />
                             </DockPanel>
-                        </DockPanel>
+                        </Grid>
                     </Border>
                 </StackPanel>
                 
                 <StackPanel Grid.Column="1" Margin="10">
-                    <models:BarChartControl Points="{Binding MagnitudePlot}" Height="250" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
-                    
+                    <Expander Header="Frequency Componets" HorizontalAlignment="Stretch">
+                        <StackPanel>
+                            <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="250" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
+                            <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding PhasePlot}" Height="250" XAxisLabel="Frequenzy (hz)" YAxisLabel="Phase Offset" ClipToBounds="True" Background="Beige"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Selected Frequency:" FontSize="20"/>
+                                <TextBox Width="50" Text="{Binding SelectedFrequency}"/>
+                                <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Expander>
+                    <controls:PhasorAnimationControl Height="600" SimulationStepSize="5" Phasors="{Binding AnimationPhasors}" TimeFactor="0.1" SelectedFrequency="{Binding SelectedFrequency}" IsRunning="{Binding IsAnimationRunning}"/>
+                    <ToggleButton Command="{Binding ToggleAnimationCommand}" Content="Play/Pause"/>
                 </StackPanel>
             </Grid>    
         </StackPanel>

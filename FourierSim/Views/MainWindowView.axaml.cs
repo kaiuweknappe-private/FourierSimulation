@@ -7,6 +7,11 @@ public partial class MainWindowView : Window
     public MainWindowView()
     {
         InitializeComponent();
+
+        Opened += (_, _) =>
+        {
+            WindowState = WindowState.Maximized;
+        };
     }
     
 }

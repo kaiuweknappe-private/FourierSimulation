@@ -3,15 +3,14 @@
         xmlns:vm="using:FourierSim.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:interactivity="using:Avalonia.Xaml.Interactivity"
-        xmlns:models="clr-namespace:FourierSim.Models"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        Height="700" Width="1000"
+        mc:Ignorable="d"
+        Width="800" Height="600"
         x:Class="FourierSim.Views.MainWindowView"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="FourierSim">
     
+    <Grid>
     <DockPanel>
         <Menu DockPanel.Dock="Top" Height="40" Background="Gray" >
             <Menu.Items>
@@ -21,5 +20,5 @@
         </Menu>
         <ContentControl Content="{Binding CurrentViewModel}"/>
     </DockPanel>
-
+    </Grid>
 </Window>

@@ -4787,7 +4787,6 @@
       "packagesPath": "/home/kai/.nuget/packages/",
       "outputPath": "/home/kai/RiderProjects/FourierSim/FourierSim/obj/",
       "projectStyle": "PackageReference",
-      "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
         "/home/kai/.nuget/NuGet/NuGet.Config"
       ],

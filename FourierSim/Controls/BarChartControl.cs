@@ -2,10 +2,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 
-namespace FourierSim.Models;
+namespace FourierSim.Controls;
 
 public class BarChartControl : Control, IDisposable
 {
@@ -51,7 +52,7 @@ public class BarChartControl : Control, IDisposable
     }
     
     public static readonly StyledProperty<int?> SelectedBarProperty =
-        AvaloniaProperty.Register<BarChartControl, int?>(nameof(SelectedBar));
+        AvaloniaProperty.Register<BarChartControl, int?>(nameof(SelectedBar), defaultValue: null, defaultBindingMode: BindingMode.TwoWay); 
     public int? SelectedBar
     {
         get => GetValue(SelectedBarProperty);
@@ -79,6 +80,10 @@ public class BarChartControl : Control, IDisposable
     public BarChartControl()
     {
         PointsProperty.Changed.AddClassHandler<BarChartControl>((x, e) => x.OnPointsChanged(e));
+        this.GetObservable(SelectedBarProperty).Subscribe(_ =>
+        {
+            InvalidateVisual();
+        });
         
         PointerEntered += OnPointerEntered;
         PointerExited += OnPointerExited;
@@ -252,4 +257,6 @@ public class BarChartControl : Control, IDisposable
         PointerExited -= OnPointerExited;
         PointerWheelChanged -= OnPointerWheelChanged;
     }
+    
+    
 }

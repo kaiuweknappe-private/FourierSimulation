@@ -1,10 +1,9 @@
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
-using System.Windows.Input;
-using Avalonia;
 
-namespace FourierSim.Models;
+namespace FourierSim.Behaviours;
 
 public class CanvasDrawingHandler : Behavior<Canvas>
 {

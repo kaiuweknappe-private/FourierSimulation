@@ -1,12 +1,9 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Media;
 
-namespace FourierSim.Models;
+namespace FourierSim.Controls;
 
 public class PointCollectionControl : Control
 {

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FourierSim")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a2055a0437e799200eb35af28b61f50b4cfd7d85")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+132ec6b042e7885726ba65a3c90fd9291a9ebbb0")]
 [assembly: System.Reflection.AssemblyProductAttribute("FourierSim")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FourierSim")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

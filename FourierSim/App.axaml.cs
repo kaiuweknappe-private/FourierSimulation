@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace FourierSim;
 
-public partial class App : Application
+public class App : Application // why not partial needed?
 {
     private IHost? _host;
     public override void Initialize()
