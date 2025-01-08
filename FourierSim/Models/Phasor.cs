@@ -2,6 +2,9 @@ using System.Numerics;
 
 namespace FourierSim.Models;
 
+/// <summary>
+/// Used for FourierSeries Animation
+/// </summary>
 public class Phasor
 {
     public int Frequency { get; set; }

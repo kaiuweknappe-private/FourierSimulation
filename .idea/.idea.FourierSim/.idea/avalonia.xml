@@ -4,6 +4,8 @@
     <option name="projectPerEditor">
       <map>
         <entry key="FourierSim/App.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/Controls/RangeSliderControl.axaml" value="FourierSim/FourierSim.csproj" />
+        <entry key="FourierSim/Themes/Generic.axaml" value="FourierSim/FourierSim.csproj" />
         <entry key="FourierSim/ViewModels/Resources1.axaml" value="FourierSim/FourierSim.csproj" />
         <entry key="FourierSim/ViewModels/ShapeAnalyzer.axaml" value="FourierSim/FourierSim.csproj" />
         <entry key="FourierSim/Views/MainWindow.axaml" value="FourierSim/FourierSim.csproj" />

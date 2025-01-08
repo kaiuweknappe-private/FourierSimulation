@@ -17,7 +17,7 @@ public class PhasorAnimationControl : Control
     #region Properties
 
     public static readonly StyledProperty<ObservableCollection<Phasor>> PhasorsProperty =
-        AvaloniaProperty.Register<PhasorAnimationControl, ObservableCollection<Phasor>>(nameof(Phasors));
+        AvaloniaProperty.Register<PhasorAnimationControl, ObservableCollection<Phasor>>(nameof(Phasors), defaultBindingMode: BindingMode.TwoWay);
     public ObservableCollection<Phasor> Phasors
     {
         get => GetValue(PhasorsProperty);
@@ -108,7 +108,10 @@ public class PhasorAnimationControl : Control
     {
         _trail.Clear();
         _lastUpdateTime = 0;
-        _stopwatch.Restart();
+        if (IsRunning)
+            _stopwatch.Restart();
+        else
+            _stopwatch.Reset();
     }
     
     public override void Render(DrawingContext context)
@@ -191,7 +194,8 @@ public class PhasorAnimationControl : Control
         if (value) // enabling
         {
             _animationTimer.Start();
-            Restart();
+            //Restart();
+            _stopwatch.Start();
         }
         else // disabling
         {

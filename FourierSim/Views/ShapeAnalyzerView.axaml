@@ -4,33 +4,34 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:FourierSim.ViewModels"
              xmlns:controls="clr-namespace:FourierSim.Controls"
-             xmlns:behaviours="clr-namespace:FourierSim.Behaviours"
+             xmlns:behaviors="clr-namespace:FourierSim.Behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FourierSim.Views.ShapeAnalyzerView"
              x:DataType="vm:ShapeAnalyzerViewModel">
     
     <ScrollViewer>
         <StackPanel>
-            <Grid ColumnDefinitions="*, *">
-                <StackPanel Grid.Column="0">
+            <Grid ColumnDefinitions="*, *" >
+                <StackPanel Grid.Column="0" Margin="5">
                     <Grid >
-                        <Canvas Height="600" Background="Beige" >
+                        <!--Note: in hindsight i would have maybe encapsulated the following canvas with its functionality into a custom control. I learned about Behaviors this way, though-->
+                        <Canvas Height="600" Background="Beige" > 
                         <Polyline Points="{Binding Points}"
                                   Stroke="Blue"
                                   StrokeThickness="2" 
                                   IsVisible="{Binding IsDrawingVisible}" />
-                        <!--<Polyline Points="{Binding UniPoints}" Stroke="Red" StrokeThickness="1" />-->
+                        
                         <controls:PointCollectionControl Points="{Binding ResampledPoints}" IsVisible="{Binding IsResampleVisible}" PointBrush="Red" PointSize="4" />
                         
                         <Interaction.Behaviors>
-                            <behaviours:CanvasDrawingHandler
+                            <behaviors:CanvasDrawingHandler
                                 StartCommand="{Binding StartDrawingCommand}"
                                 MoveCommand="{Binding UpdateDrawingCommand}"
                                 StopCommand="{Binding FinishDrawingCommand}" />
                         </Interaction.Behaviors>
                         </Canvas>
                     </Grid>
-                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray">
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="150">
                         <Grid ColumnDefinitions="*,*">
                             <StackPanel Grid.Column="0">
                                 <CheckBox IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
@@ -44,22 +45,65 @@
                     </Border>
                 </StackPanel>
                 
-                <StackPanel Grid.Column="1" Margin="10">
-                    <Expander Header="Frequency Componets" HorizontalAlignment="Stretch">
-                        <StackPanel>
-                            <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="250" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
-                            <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding PhasePlot}" Height="250" XAxisLabel="Frequenzy (hz)" YAxisLabel="Phase Offset" ClipToBounds="True" Background="Beige"/>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Selected Frequency:" FontSize="20"/>
-                                <TextBox Width="50" Text="{Binding SelectedFrequency}"/>
-                                <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
+                <StackPanel Grid.Column="1" Margin="5">
+                    <controls:PhasorAnimationControl Height="600" SimulationStepSize="{Binding SimulationStepSize}" 
+                                                     Phasors="{Binding AnimationPhasors}" 
+                                                     TimeFactor="{Binding TimeFactor}" 
+                                                     SelectedFrequency="{Binding SelectedFrequency}"
+                                                     IsRunning="{Binding IsAnimationRunning}"/>
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="150">
+                        <Grid ColumnDefinitions="*,*">
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
+                                <ToggleButton IsChecked="{Binding IsAnimationRunning}" Content="Play/Pause" HorizontalAlignment="Center"/>    
+                                <DockPanel >
+                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
+                                    <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}" />
+                                </DockPanel> 
+                                <Label Content="Animation Interval: 16 ms" HorizontalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Label Content="Simulation Interval: " />
+                                    <Label Width="20" Content="{Binding SimulationStepSize}" />
+                                    <Label Content=" ms" />
+                                    <Border Margin="10,0,0,0" Padding="1" BorderBrush="LightGray" BorderThickness="2" CornerRadius="4">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="-1" Content="-" Width="20" Height="20"/>
+                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Content="+" Width="20" Height="20"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>             
                             </StackPanel>
-                        </StackPanel>
-                    </Expander>
-                    <controls:PhasorAnimationControl Height="600" SimulationStepSize="5" Phasors="{Binding AnimationPhasors}" TimeFactor="0.1" SelectedFrequency="{Binding SelectedFrequency}" IsRunning="{Binding IsAnimationRunning}"/>
-                    <ToggleButton Command="{Binding ToggleAnimationCommand}" Content="Play/Pause"/>
+                            <StackPanel Grid.Column="1">
+                                <controls:RangeSliderControl Height="50" Minimum="-100" Maximum="100" 
+                                                             LowerValue="{Binding SelectedLowerFrequency}"
+                                                             UpperValue="{Binding SelectedUpperFrequency}"
+                                                             TickInterval="1"
+                                                             OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Sort Phasors by:" />
+                                    <ComboBox Margin="10,0,10,0" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                        <ComboBoxItem Content="descending magnitude"/>
+                                        <ComboBoxItem Content="ascending angular velocity"/>
+                                        <Interaction.Behaviors>
+                                            <behaviors:ComboBoxSelectionChangedBehavior OnSelectionChangedCommand="{Binding SwitchPhasorSortingCommand}"/>
+                                        </Interaction.Behaviors>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </StackPanel>
             </Grid>    
+            <Border Margin="10">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Selected Frequency:" FontSize="20"/>
+                        <TextBox Width="50" Text="{Binding SelectedFrequency}"/>
+                        <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
+                    </StackPanel>
+                    <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="400" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
+                    <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding PhasePlot}" Height="100" XAxisLabel="Frequenzy (hz)" YAxisLabel="Phase Offset" ClipToBounds="True" Background="Beige"/>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

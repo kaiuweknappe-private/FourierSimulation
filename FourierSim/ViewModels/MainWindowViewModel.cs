@@ -12,18 +12,18 @@ namespace FourierSim.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly IServiceProvider _service;
+    private readonly IServiceProvider _services;
     private readonly INavigationService _navigationService;
     
-    public MainWindowViewModel(IServiceProvider service, INavigationService navigationService)
+    public MainWindowViewModel(IServiceProvider services, INavigationService navigationService)
     {
-        _service = service;
+        _services = services;
         _navigationService = navigationService;
         
         _navigationService.NavigationRequested += OnNavigationRequested;
         
         //default view.. event. homeView machen ?
-        CurrentViewModel = _service.GetRequiredService<ShapeAnalyzerViewModel>();
+        CurrentViewModel = _services.GetRequiredService<ShapeAnalyzerViewModel>();
     }
 
     [ObservableProperty] 
@@ -37,13 +37,13 @@ public partial class MainWindowViewModel : ViewModelBase
             case "ShapeAnalyzer": 
                 _navigationService.NavigateTo<ShapeAnalyzerViewModel>();
                 break;
-            
+            // ..
         }
     }
     
     private void OnNavigationRequested(object? sender, NavigationMessage e)
     {
-        CurrentViewModel = _service.GetRequiredService(e.ViewModelType) as ViewModelBase;
+        CurrentViewModel = _services.GetRequiredService(e.ViewModelType) as ViewModelBase;
     }
     
 }

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
 
-namespace FourierSim.Behaviours;
+namespace FourierSim.Behaviors;
 
 public class CanvasDrawingHandler : Behavior<Canvas>
 {
