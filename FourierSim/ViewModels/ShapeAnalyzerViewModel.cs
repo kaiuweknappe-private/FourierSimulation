@@ -142,10 +142,30 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private int simulationStepSize = 10;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FrequenciesAmount))]
     private double selectedLowerFrequency = -20;
-    [ObservableProperty] 
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FrequenciesAmount))]
     private double selectedUpperFrequency = 20;
 
+    [ObservableProperty] 
+    private bool limitFrequencies = false;
+    partial void OnLimitFrequenciesChanged(bool oldValue, bool newValue)
+    {
+        if(oldValue != newValue)
+            UpdateFrequencies();
+    }
+
+    [ObservableProperty] 
+    private double selectedFrequenciesAmount;
+    partial void OnSelectedFrequenciesAmountChanged(double value)
+    {
+        UpdateFrequencies();
+    }
+    
+    public double FrequenciesAmount => Math.Abs(SelectedUpperFrequency - SelectedLowerFrequency) + 1; 
+    
     [RelayCommand]
     private void UpdateFrequencies()
     {
@@ -154,11 +174,20 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
         //collect all phasors according to freq selection: (freq 0 is always added)  
         var newPhasorCollection = new List<Phasor>();
         newPhasorCollection.Add(new Phasor(0, _spectrum[0].Magnitude, _spectrum[0].Phase));
-        for (var f = SelectedLowerFrequency; f <= SelectedUpperFrequency; f++) 
+        for (var frequency = (int)SelectedLowerFrequency; frequency <= (int)SelectedUpperFrequency; frequency++) 
         {
-            var frequency = Convert.ToInt32(f);
-            if (frequency == 0) continue;
-            newPhasorCollection.Add(new Phasor(frequency, _spectrum[frequency].Magnitude, _spectrum[frequency].Phase));
+            if (frequency != 0) 
+                newPhasorCollection.Add(new Phasor(frequency, _spectrum[frequency].Magnitude, _spectrum[frequency].Phase));
+        }
+        
+        //limit frequencies: only select the highest {SelectedFrequenciesAmount}-frequencies (by mag.) 
+        if (LimitFrequencies)
+        {
+            //sort by ascending mag:
+            newPhasorCollection.Sort((a, b) => a.Magnitude.CompareTo(b.Magnitude));
+            
+            //remove most insignificant to match {SelectedFrequenciesAmount}-frequencies
+            newPhasorCollection.RemoveRange(0, newPhasorCollection.Count - (int)SelectedFrequenciesAmount);
         }
         
         //sort and update PhasorCollection 
@@ -188,8 +217,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private void ChangeSimulationStepSize(string change)
     {
         if (!int.TryParse(change, out var value)) return;
-        SimulationStepSize += value;
-        SimulationStepSize = Math.Clamp(SimulationStepSize, 1, 16);
+        SimulationStepSize = Math.Clamp(SimulationStepSize + value, 1, 16);
     }
     
     #endregion

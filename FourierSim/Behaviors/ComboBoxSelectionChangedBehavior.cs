@@ -53,8 +53,9 @@ public class ComboBoxSelectionChangedBehavior : Behavior<ComboBox>
         //doesnt work if the T of the relaycommand is a value type -> returns false even if the private canexecute predicate is null (in which case true would be expected)
         // -> in which case i cant differentiate between whether there is no can execute or it just evaluates to false .. not sure how to handle this
         //in this costum case i dont need it anyways
+        //ensuring as the user to use RelayCommand<T> in a way that T is nullable (eighter ref type or value type?) would be a solution
         //if(OnSelectionChangedCommand?.CanExecute(null) ?? false) 
-        OnSelectionChangedCommand?.Execute(AssociatedObject.SelectedIndex);
+            OnSelectionChangedCommand?.Execute(AssociatedObject.SelectedIndex);
     }
     
 }

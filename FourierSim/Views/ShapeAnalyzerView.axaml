@@ -54,8 +54,8 @@
                     <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="150">
                         <Grid ColumnDefinitions="*,*">
                             <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
-                                <ToggleButton IsChecked="{Binding IsAnimationRunning}" Content="Play/Pause" HorizontalAlignment="Center"/>    
                                 <DockPanel >
+                                    <ToggleButton DockPanel.Dock="Left" Margin="0,0,7,0" IsChecked="{Binding IsAnimationRunning}" Content="Play/Pause" HorizontalAlignment="Center"/>    
                                     <Label DockPanel.Dock="Right" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
                                     <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}" />
                                 </DockPanel> 
@@ -70,15 +70,8 @@
                                             <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Content="+" Width="20" Height="20"/>
                                         </StackPanel>
                                     </Border>
-                                </StackPanel>             
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <controls:RangeSliderControl Height="50" Minimum="-100" Maximum="100" 
-                                                             LowerValue="{Binding SelectedLowerFrequency}"
-                                                             UpperValue="{Binding SelectedUpperFrequency}"
-                                                             TickInterval="1"
-                                                             OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
-                                <StackPanel Orientation="Horizontal">
+                                </StackPanel>      
+                                <StackPanel Orientation="Horizontal" >
                                     <Label Content="Sort Phasors by:" />
                                     <ComboBox Margin="10,0,10,0" HorizontalAlignment="Stretch" SelectedIndex="0">
                                         <ComboBoxItem Content="descending magnitude"/>
@@ -88,6 +81,25 @@
                                         </Interaction.Behaviors>
                                     </ComboBox>
                                 </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <controls:RangeSliderControl Height="40" Minimum="-100" Maximum="100" 
+                                                             LowerValue="{Binding SelectedLowerFrequency}"
+                                                             UpperValue="{Binding SelectedUpperFrequency}"
+                                                             TickInterval="1"
+                                                             OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
+                                <Grid ColumnDefinitions="Auto, *" RowDefinitions="15, Auto">
+                                    <CheckBox Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0" IsChecked="{Binding LimitFrequencies}"/>
+                                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                                        <Label Content="Only include "/>
+                                        <Label Content="{Binding SelectedFrequenciesAmount}"/>
+                                        <Label Content=" most important Frequecies"/>
+                                    </StackPanel>
+                                    <Slider Grid.Column="1" Grid.Row="1" TickFrequency="1" IsSnapToTickEnabled="True" Minimum="0"  
+                                            IsEnabled="{Binding LimitFrequencies}"
+                                            Maximum="{Binding FrequenciesAmount}"
+                                            Value="{Binding SelectedFrequenciesAmount}"/>
+                                </Grid>
                             </StackPanel>
                         </Grid>
                     </Border>
