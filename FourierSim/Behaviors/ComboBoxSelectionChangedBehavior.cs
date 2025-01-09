@@ -50,10 +50,12 @@ public class ComboBoxSelectionChangedBehavior : Behavior<ComboBox>
         if (AssociatedObject == null) return;
         
         //not checking any CanExecute
-        //doesnt work if the T of the relaycommand is a value type -> returns false even if the private canexecute predicate is null (in which case true would be expected)
+        //doesnt work if the T of the relaycommand is a value type and i invoke the canExecute with null-> returns false even if the private canexecute predicate is null (in which case true would be expected)
         // -> in which case i cant differentiate between whether there is no can execute or it just evaluates to false .. not sure how to handle this
-        //in this costum case i dont need it anyways
-        //if(OnSelectionChangedCommand?.CanExecute(null) ?? false) 
+        //would need to get the underlaying type if its a RelayCommand<> and call .CanExecute() with the default of that type
+        //this seems not like a good solution to this though, in my costum case i dont need it anyways
+        //if(OnSelectionChangedCommand?.CanExecute(null) ?? false) //try invoke with new object()
+        
         OnSelectionChangedCommand?.Execute(AssociatedObject.SelectedIndex);
     }
     
