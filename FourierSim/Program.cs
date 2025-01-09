@@ -1,5 +1,7 @@
 ﻿global using System;
 global using Avalonia;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
 
 namespace FourierSim;
 
@@ -11,6 +13,9 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        // Register icon provider
+        IconProvider.Current.Register<FontAwesomeIconProvider>();
+        
         BuildAvaloniaApp()
             .StartWithClassicDesktopLifetime(args);
     }

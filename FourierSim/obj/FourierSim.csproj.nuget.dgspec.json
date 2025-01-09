@@ -45,7 +45,7 @@
           "dependencies": {
             "Avalonia": {
               "target": "Package",
-              "version": "[11.2.2, )"
+              "version": "[11.2.3, )"
             },
             "Avalonia.Desktop": {
               "target": "Package",
@@ -78,6 +78,10 @@
             "Microsoft.Extensions.Hosting": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "Projektanker.Icons.Avalonia.FontAwesome": {
+              "target": "Package",
+              "version": "[9.6.0, )"
             }
           },
           "imports": [

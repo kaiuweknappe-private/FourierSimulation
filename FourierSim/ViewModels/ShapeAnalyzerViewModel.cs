@@ -206,6 +206,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
             0 => Comparer<Phasor>.Create((a, b) => a.Magnitude.CompareTo(b.Magnitude) * -1),
             //by ascending angular velocity:
             1 => Comparer<Phasor>.Create((a, b) => Math.Abs(a.Frequency).CompareTo(Math.Abs(b.Frequency))),
+            //maybe a random option for fun?
             _ => null
         };
         

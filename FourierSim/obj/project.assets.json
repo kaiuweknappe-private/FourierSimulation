@@ -2,11 +2,11 @@
   "version": 3,
   "targets": {
     "net8.0": {
-      "Avalonia/11.2.2": {
+      "Avalonia/11.2.3": {
         "type": "package",
         "dependencies": {
           "Avalonia.BuildServices": "0.0.29",
-          "Avalonia.Remote.Protocol": "11.2.2",
+          "Avalonia.Remote.Protocol": "11.2.3",
           "MicroCom.Runtime": "0.11.0"
         },
         "compile": {
@@ -235,7 +235,7 @@
           }
         }
       },
-      "Avalonia.Remote.Protocol/11.2.2": {
+      "Avalonia.Remote.Protocol/11.2.3": {
         "type": "package",
         "compile": {
           "lib/net8.0/Avalonia.Remote.Protocol.dll": {
@@ -1173,6 +1173,31 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "Projektanker.Icons.Avalonia/9.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.dll": {}
+        }
+      },
+      "Projektanker.Icons.Avalonia.FontAwesome/9.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Projektanker.Icons.Avalonia": "9.6.0",
+          "System.Text.Json": "9.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.FontAwesome.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.FontAwesome.dll": {}
+        }
+      },
       "SkiaSharp/2.88.9": {
         "type": "package",
         "dependencies": {
@@ -1408,11 +1433,11 @@
       }
     },
     "net8.0/linux-x64": {
-      "Avalonia/11.2.2": {
+      "Avalonia/11.2.3": {
         "type": "package",
         "dependencies": {
           "Avalonia.BuildServices": "0.0.29",
-          "Avalonia.Remote.Protocol": "11.2.2",
+          "Avalonia.Remote.Protocol": "11.2.3",
           "MicroCom.Runtime": "0.11.0"
         },
         "compile": {
@@ -1621,7 +1646,7 @@
           }
         }
       },
-      "Avalonia.Remote.Protocol/11.2.2": {
+      "Avalonia.Remote.Protocol/11.2.3": {
         "type": "package",
         "compile": {
           "lib/net8.0/Avalonia.Remote.Protocol.dll": {
@@ -2524,6 +2549,31 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "Projektanker.Icons.Avalonia/9.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Avalonia": "11.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.dll": {}
+        }
+      },
+      "Projektanker.Icons.Avalonia.FontAwesome/9.6.0": {
+        "type": "package",
+        "dependencies": {
+          "Projektanker.Icons.Avalonia": "9.6.0",
+          "System.Text.Json": "9.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.FontAwesome.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Projektanker.Icons.Avalonia.FontAwesome.dll": {}
+        }
+      },
       "SkiaSharp/2.88.9": {
         "type": "package",
         "dependencies": {
@@ -2709,10 +2759,10 @@
     }
   },
   "libraries": {
-    "Avalonia/11.2.2": {
-      "sha512": "gycD/+pjaNh6288vEGDOcgks3Gz/dhZaZu6VSao6wMBXAQpBMEFlU4gW1dXXH2N0zdOlv3Jo1PgmH2megCe2yw==",
+    "Avalonia/11.2.3": {
+      "sha512": "pD6woFAUfGcyEvMmrpctntU4jv4fT8752pfx1J5iRORVX3Ob0oQi8PWo0TXVaAJZiSfH0cdKTeKx0w0DzD0/mg==",
       "type": "package",
-      "path": "avalonia/11.2.2",
+      "path": "avalonia/11.2.3",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -2720,7 +2770,7 @@
         "Icon.png",
         "analyzers/dotnet/cs/Avalonia.Analyzers.dll",
         "analyzers/dotnet/cs/Avalonia.Generators.dll",
-        "avalonia.11.2.2.nupkg.sha512",
+        "avalonia.11.2.3.nupkg.sha512",
         "avalonia.nuspec",
         "build/Avalonia.Generators.props",
         "build/Avalonia.props",
@@ -3038,15 +3088,15 @@
         "runtimes/osx/native/libAvaloniaNative.dylib"
       ]
     },
-    "Avalonia.Remote.Protocol/11.2.2": {
-      "sha512": "76nQ2/TkJAmthHcCPoVznnCfsqhy+pDPFBhySoRv3ZIsj5q9jIgR0bi7rznIcFIKnfoXMEpB1uxMHbfeQ99OgQ==",
+    "Avalonia.Remote.Protocol/11.2.3": {
+      "sha512": "6V0aNtld48WmO8tAlWwlRlUmXYcOWv+1eJUSl1ETF+1blUe5yhcSmuWarPprO0hDk8Ta6wGfdfcrnVl2gITYcA==",
       "type": "package",
-      "path": "avalonia.remote.protocol/11.2.2",
+      "path": "avalonia.remote.protocol/11.2.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
-        "avalonia.remote.protocol.11.2.2.nupkg.sha512",
+        "avalonia.remote.protocol.11.2.3.nupkg.sha512",
         "avalonia.remote.protocol.nuspec",
         "lib/net6.0/Avalonia.Remote.Protocol.dll",
         "lib/net6.0/Avalonia.Remote.Protocol.xml",
@@ -4343,6 +4393,32 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "Projektanker.Icons.Avalonia/9.6.0": {
+      "sha512": "eiQJgr7p8whK3AXbkDwyIEij6I/4ZfTMhBq4ZCy9N22Zvja6b5jlgIknb5knMesTBj53JObOGqIDyzWh8Mzrfg==",
+      "type": "package",
+      "path": "projektanker.icons.avalonia/9.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/Projektanker.Icons.Avalonia.dll",
+        "projektanker.icons.avalonia.9.6.0.nupkg.sha512",
+        "projektanker.icons.avalonia.nuspec"
+      ]
+    },
+    "Projektanker.Icons.Avalonia.FontAwesome/9.6.0": {
+      "sha512": "LCsWBBVDL/vToTm2ZW3ai1vT2c/98WXXqa0yVALxDTuly0BbZcpfuauvq31npbX+LnnKNNalICwX9NRRt3JKvw==",
+      "type": "package",
+      "path": "projektanker.icons.avalonia.fontawesome/9.6.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/netstandard2.0/Projektanker.Icons.Avalonia.FontAwesome.dll",
+        "projektanker.icons.avalonia.fontawesome.9.6.0.nupkg.sha512",
+        "projektanker.icons.avalonia.fontawesome.nuspec"
+      ]
+    },
     "SkiaSharp/2.88.9": {
       "sha512": "3MD5VHjXXieSHCleRLuaTXmL2pD0mB7CcOB1x2kA1I4bhptf4e3R27iM93264ZYuAq6mkUyX5XbcxnZvMJYc1Q==",
       "type": "package",
@@ -4764,7 +4840,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
-      "Avalonia >= 11.2.2",
+      "Avalonia >= 11.2.3",
       "Avalonia.Desktop >= 11.2.2",
       "Avalonia.Diagnostics >= 11.2.2",
       "Avalonia.Fonts.Inter >= 11.2.2",
@@ -4772,7 +4848,8 @@
       "Avalonia.Themes.Fluent >= 11.2.2",
       "Avalonia.Xaml.Behaviors >= 11.2.0.1",
       "CommunityToolkit.Mvvm >= 8.4.0",
-      "Microsoft.Extensions.Hosting >= 9.0.0"
+      "Microsoft.Extensions.Hosting >= 9.0.0",
+      "Projektanker.Icons.Avalonia.FontAwesome >= 9.6.0"
     ]
   },
   "packageFolders": {
@@ -4819,7 +4896,7 @@
         "dependencies": {
           "Avalonia": {
             "target": "Package",
-            "version": "[11.2.2, )"
+            "version": "[11.2.3, )"
           },
           "Avalonia.Desktop": {
             "target": "Package",
@@ -4852,6 +4929,10 @@
           "Microsoft.Extensions.Hosting": {
             "target": "Package",
             "version": "[9.0.0, )"
+          },
+          "Projektanker.Icons.Avalonia.FontAwesome": {
+            "target": "Package",
+            "version": "[9.6.0, )"
           }
         },
         "imports": [

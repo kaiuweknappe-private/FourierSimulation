@@ -5,9 +5,15 @@
              xmlns:vm="using:FourierSim.ViewModels"
              xmlns:controls="clr-namespace:FourierSim.Controls"
              xmlns:behaviors="clr-namespace:FourierSim.Behaviors"
+             xmlns:converter="clr-namespace:FourierSim.Converter"
+             xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FourierSim.Views.ShapeAnalyzerView"
              x:DataType="vm:ShapeAnalyzerViewModel">
+    
+    <UserControl.Resources>
+        <converter:BoolInverterConverter x:Key="BoolInverterConverter"/>
+    </UserControl.Resources>
     
     <ScrollViewer>
         <StackPanel>
@@ -55,7 +61,12 @@
                         <Grid ColumnDefinitions="*,*">
                             <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
                                 <DockPanel >
-                                    <ToggleButton DockPanel.Dock="Left" Margin="0,0,7,0" IsChecked="{Binding IsAnimationRunning}" Content="Play/Pause" HorizontalAlignment="Center"/>    
+                                    <ToggleButton DockPanel.Dock="Left" Width="60" Height="40" Margin="0,0,10,0" IsChecked="{Binding IsAnimationRunning}" HorizontalAlignment="Center">
+                                        <Grid>
+                                            <icons:Icon FontSize="20" Value="fa-solid fa-play" IsVisible="{Binding IsAnimationRunning, Converter={StaticResource BoolInverterConverter}}" />
+                                            <icons:Icon FontSize="20" Value="fa-solid fa-pause" IsVisible="{Binding IsAnimationRunning}" />
+                                        </Grid>
+                                    </ToggleButton>
                                     <Label DockPanel.Dock="Right" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
                                     <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}" />
                                 </DockPanel> 
@@ -66,8 +77,12 @@
                                     <Label Content=" ms" />
                                     <Border Margin="10,0,0,0" Padding="1" BorderBrush="LightGray" BorderThickness="2" CornerRadius="4">
                                         <StackPanel Orientation="Horizontal">
-                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="-1" Content="-" Width="20" Height="20"/>
-                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Content="+" Width="20" Height="20"/>
+                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="-1" Width="25" Height="25">
+                                                <icons:Icon Value="fa-solid fa-minus" FontSize="10"/>
+                                            </Button>
+                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Width="25" Height="25">
+                                                <icons:Icon Value="fa-solid fa-plus" FontSize="10"/>
+                                            </Button>
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>      
