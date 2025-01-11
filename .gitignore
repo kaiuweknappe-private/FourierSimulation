@@ -1,0 +1,13 @@
+#removing rider ide files
+.idea/
+
+
+
+#and Building results
+obj/
+
+bin/
+
+
+#my notes file
+Planning.txt
