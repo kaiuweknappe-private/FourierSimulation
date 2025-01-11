@@ -13,6 +13,7 @@
     
     <UserControl.Resources>
         <converter:BoolInverterConverter x:Key="BoolInverterConverter"/>
+        <converter:StringToNullableIntConverter x:Key="StringToNullableIntConverter"/>
     </UserControl.Resources>
     
     <ScrollViewer>
@@ -124,7 +125,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Selected Frequency:" FontSize="20"/>
-                        <TextBox Width="50" Text="{Binding SelectedFrequency}"/>
+                        <TextBox Width="50" Text="{Binding SelectedFrequency, Converter={StaticResource StringToNullableIntConverter}}"/>
                         <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
                     </StackPanel>
                     <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="400" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
