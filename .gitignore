@@ -1,7 +1,7 @@
 #removing rider ide files
 .idea/
 
-
+FourierSim.sln.DotSettings.user
 
 #and Building results
 obj/
