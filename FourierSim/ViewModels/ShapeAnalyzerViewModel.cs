@@ -1,17 +1,21 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Numerics;
-using Avalonia.Input.TextInput;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FourierSim.Models;
 using FourierSim.Services;
-using Tmds.DBus.Protocol;
 
 namespace FourierSim.ViewModels;
 
+/// <summary>
+/// This ViewModel and corresponding View got a bit long due to the various interaction-options.
+/// Note: I thought about splitting this into even smaller peaces.
+/// Although more complex logic is already encapsulated in a Service or custom Control.
+/// One Idea is to take the drawing related part out into a separate usercontrol with vm.
+/// In that case i would have to make e.g. the ResamplingService stateful and somehow manage that this vm knows when to update.">
+/// lets the user draw a loop and analyze the frequencies it consists of.
+/// </summary>
 public partial class ShapeAnalyzerViewModel : ViewModelBase
 {
     #region Drawing Related
@@ -114,8 +118,11 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSelectedFrequency))]
     private int? selectedFrequency;
 
+    public bool HasSelectedFrequency => SelectedFrequency.HasValue;
+    
     partial void OnSelectedFrequencyChanged(int? value)
     {
         if (value is null)
@@ -123,7 +130,6 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
             SelectedCoefficient = string.Empty;
             return;
         }
-        
 
         var c = _spectrum[(int)value];
         SelectedCoefficient = $"{c.Magnitude:F2} ∠ {c.Phase/Math.PI:F2} π";
@@ -139,7 +145,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private double timeFactor = .1;
 
     [ObservableProperty] 
-    private int simulationStepSize = 10;
+    private int simulationStepSize = 5;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FrequenciesAmount))]
@@ -219,6 +225,13 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     {
         if (!int.TryParse(change, out var value)) return;
         SimulationStepSize = Math.Clamp(SimulationStepSize + value, 1, 16);
+    }
+    
+    [RelayCommand]
+    private void ChangeSelectedFrequency(string change)
+    {
+        if (SelectedFrequency == null || !int.TryParse(change, out var value)) return;
+        SelectedFrequency = Math.Clamp((int)SelectedFrequency + value, -100, 100);
     }
     
     #endregion

@@ -125,7 +125,15 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Selected Frequency:" FontSize="20"/>
-                        <TextBox Width="50" Text="{Binding SelectedFrequency, Converter={StaticResource StringToNullableIntConverter}}"/>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Left" Command="{Binding ChangeSelectedFrequencyCommand}" CommandParameter="-1" IsEnabled="{Binding HasSelectedFrequency}"> 
+                                <icons:Icon Value="fa-solid fa-arrow-left" FontSize="15"/>
+                            </Button>
+                            <Button DockPanel.Dock="Right" Command="{Binding ChangeSelectedFrequencyCommand}" CommandParameter="1" IsEnabled="{Binding HasSelectedFrequency}"> 
+                                <icons:Icon Value="fa-solid fa-arrow-right" FontSize="15"/>
+                            </Button>
+                            <TextBox Width="50" Text="{Binding SelectedFrequency, Converter={StaticResource StringToNullableIntConverter}}"/>
+                        </DockPanel>
                         <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
                     </StackPanel>
                     <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="400" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
