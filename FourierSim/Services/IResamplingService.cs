@@ -67,12 +67,11 @@ public class ResamplingService : IResamplingService
         var resampledSignal = new Dictionary<double, Point>();
         
         resampledSignal.Add(0, inputSignal[0]); // first Point
-        for (var t = interval; t <= 1; t += interval)
+        for (var t = interval; t <= 1 - (interval / 2)/*no overlap due to rounding*/; t += interval)
         {   
             var point = Interpolate(inputSignal, t);
             resampledSignal.Add(t, point);
         }
-        //do i need to handle last point differnet?
         
         return resampledSignal;
     }
