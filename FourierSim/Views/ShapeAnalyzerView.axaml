@@ -38,7 +38,7 @@
                         </Interaction.Behaviors>
                         </Canvas>
                     </Grid>
-                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="150">
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="160">
                         <Grid ColumnDefinitions="*,*">
                             <StackPanel Grid.Column="0">
                                 <CheckBox IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
@@ -53,13 +53,14 @@
                 </StackPanel>
                 
                 <StackPanel Grid.Column="1" Margin="5">
-                    <controls:PhasorAnimationControl Height="600" SimulationStepSize="{Binding SimulationStepSize}" 
+                    <controls:PhasorAnimationControl Height="600" ClipToBounds="True" 
+                                                     SimulationStepSize="{Binding SimulationStepSize}" 
                                                      Phasors="{Binding AnimationPhasors}" 
                                                      TimeFactor="{Binding TimeFactor}" 
                                                      SelectedFrequency="{Binding SelectedFrequency}"
                                                      IsRunning="{Binding IsAnimationRunning}"/>
-                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="150">
-                        <Grid ColumnDefinitions="*,*">
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="160">
+                        <Grid ColumnDefinitions="*,10,*">
                             <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
                                 <DockPanel >
                                     <ToggleButton DockPanel.Dock="Left" Width="60" Height="40" Margin="0,0,10,0" IsChecked="{Binding IsAnimationRunning}" HorizontalAlignment="Center">
@@ -68,8 +69,8 @@
                                             <icons:Icon FontSize="20" Value="fa-solid fa-pause" IsVisible="{Binding IsAnimationRunning}" />
                                         </Grid>
                                     </ToggleButton>
-                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
-                                    <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}" />
+                                    <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
+                                    <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}"  Margin="7,0"/>
                                 </DockPanel> 
                                 <Label Content="Animation Interval: 16 ms" HorizontalAlignment="Center" />
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -87,7 +88,7 @@
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>      
-                                <StackPanel Orientation="Horizontal" >
+                                <StackPanel Orientation="Horizontal" Margin="0,2" HorizontalAlignment="Center">
                                     <Label Content="Sort Phasors by:" />
                                     <ComboBox Margin="10,0,10,0" HorizontalAlignment="Stretch" SelectedIndex="0">
                                         <ComboBoxItem Content="descending magnitude"/>
@@ -98,24 +99,26 @@
                                     </ComboBox>
                                 </StackPanel>
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <controls:RangeSliderControl Height="40" Minimum="-100" Maximum="100" 
+                            <StackPanel Grid.Column="2">
+                                <controls:RangeSliderControl Height="50" Minimum="-100" Maximum="100" 
                                                              LowerValue="{Binding SelectedLowerFrequency}"
                                                              UpperValue="{Binding SelectedUpperFrequency}"
                                                              TickInterval="1"
                                                              OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
-                                <Grid ColumnDefinitions="Auto, *" RowDefinitions="15, Auto">
-                                    <CheckBox Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0" IsChecked="{Binding LimitFrequencies}"/>
-                                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
-                                        <Label Content="Only include "/>
-                                        <Label Content="{Binding SelectedFrequenciesAmount}"/>
-                                        <Label Content=" most important Frequecies"/>
-                                    </StackPanel>
-                                    <Slider Grid.Column="1" Grid.Row="1" TickFrequency="1" IsSnapToTickEnabled="True" Minimum="0"  
-                                            IsEnabled="{Binding LimitFrequencies}"
-                                            Maximum="{Binding FrequenciesAmount}"
-                                            Value="{Binding SelectedFrequenciesAmount}"/>
-                                </Grid>
+                                <Border Background="DimGray" BorderBrush="Black" BorderThickness="2" Padding="10,0"> 
+                                    <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, 15">
+                                        <CheckBox Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0" IsChecked="{Binding LimitFrequencies}"/>
+                                        <Slider Grid.Column="1" Grid.Row="0" TickFrequency="1" IsSnapToTickEnabled="True" Minimum="0"  
+                                                IsEnabled="{Binding LimitFrequencies}"
+                                                Maximum="{Binding FrequenciesAmount}"
+                                                Value="{Binding SelectedFrequenciesAmount}"/>
+                                        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Content="Only include the"/>
+                                            <Label Content="{Binding SelectedFrequenciesAmount}"/>
+                                            <Label Content="-most important Frequencies"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -137,7 +140,7 @@
                         <Label FontSize="20" Margin="20,0,0,0" Content="{Binding SelectedCoefficient}" />
                     </StackPanel>
                     <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding MagnitudePlot}" Height="400" XAxisLabel="Frequenzy (hz)" YAxisLabel="Magnitude" ClipToBounds="True" Background="Beige"/>
-                    <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding PhasePlot}" Height="100" XAxisLabel="Frequenzy (hz)" YAxisLabel="Phase Offset" ClipToBounds="True" Background="Beige"/>
+                    <controls:BarChartControl Margin="5" SelectedBar="{Binding SelectedFrequency}" Points="{Binding PhasePlot}" Height="100" XAxisLabel="Frequenzy (hz)" YAxisLabel="Phase Offset (°)" ClipToBounds="True" Background="Beige" VerticalScale=".2"/>
                 </StackPanel>
             </Border>
         </StackPanel>

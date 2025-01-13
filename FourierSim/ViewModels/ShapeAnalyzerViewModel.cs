@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Numerics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -85,58 +86,61 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private readonly IFourierService _fourierService = new FourierSeries();
 
     private Comparer<Phasor>? _phasorSortingOrder;
-
     private Dictionary<int, Complex> _spectrum = new();
-    public ObservableCollection<Point> MagnitudePlot { get; set; } = new();
-    public ObservableCollection<Point> PhasePlot { get; set; } = new();
 
-    [ObservableProperty]
+    [ObservableProperty] 
+    private ObservableCollection<Point> magnitudePlot = new();
+
+    [ObservableProperty] 
+    private ObservableCollection<Point> phasePlot = new();
+
+    [ObservableProperty] 
     private ObservableCollection<Phasor> animationPhasors = new();
-    
+
     private void Analyze()
     {
         var uniformSignal = _resamplingService.GetResample(Points, SampleDensity);
-        
+
         //update resampled-points collection:
         ResampledPoints = new ObservableCollection<Point>(uniformSignal.Values);
         _spectrum = _fourierService.GetCoefficientSpectrum(uniformSignal, -100, 100);
-        
+
         //update coefficient Plots:
-        MagnitudePlot.Clear();
-        PhasePlot.Clear();
-        foreach (var sample in _spectrum)
+        MagnitudePlot =
+            new ObservableCollection<Point>(_spectrum.Select(frequency =>
+                new Point(frequency.Key, frequency.Value.Magnitude)));
+        PhasePlot = new ObservableCollection<Point>(_spectrum.Select(frequency =>
         {
-            double x = sample.Key;
-            double y = sample.Value.Magnitude;
-            MagnitudePlot.Add(new Point(x,y));
-            y = sample.Value.Phase;
-            PhasePlot.Add(new Point(x,y));
-        }
-        
+            //convert phase from [-pi;pi] -> [0;360] deg. (for convenience)
+            var y = frequency.Value.Phase;
+            y = y < 0 ? y + 2 * Math.PI : y;
+            return new Point(frequency.Key, y * 180 / Math.PI);
+        }));
+
         //update phasors for animation:
-        UpdateFrequencies();    
+        UpdateFrequencies();
     }
 
-    [ObservableProperty]
+    [ObservableProperty] 
     [NotifyPropertyChangedFor(nameof(HasSelectedFrequency))]
+    [NotifyPropertyChangedFor(nameof(SelectedCoefficient))]
     private int? selectedFrequency;
 
     public bool HasSelectedFrequency => SelectedFrequency.HasValue;
-    
-    partial void OnSelectedFrequencyChanged(int? value)
+
+    public string SelectedCoefficient
     {
-        if (value is null)
+        get
         {
-            SelectedCoefficient = string.Empty;
-            return;
+            if (SelectedFrequency is not int value)
+                return string.Empty;
+
+            var c = _spectrum[value];
+            var phase = c.Phase;
+            phase = phase < 0 ? phase + 2 * Math.PI : phase;
+            return $"{c.Magnitude:F2} ∠ {c.Phase / Math.PI:F2} π ({phase * 180/Math.PI:F2} \u00b0)";
         }
-
-        var c = _spectrum[(int)value];
-        SelectedCoefficient = $"{c.Magnitude:F2} ∠ {c.Phase/Math.PI:F2} π";
     }
-
-    [ObservableProperty]
-    private string selectedCoefficient = string.Empty;
 
     [ObservableProperty]
     private bool isAnimationRunning = false;
@@ -164,7 +168,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     }
 
     [ObservableProperty] 
-    private double selectedFrequenciesAmount;
+    private double selectedFrequenciesAmount = 2;
     partial void OnSelectedFrequenciesAmountChanged(double value)
     {
         UpdateFrequencies();
@@ -212,7 +216,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
             0 => Comparer<Phasor>.Create((a, b) => a.Magnitude.CompareTo(b.Magnitude) * -1),
             //by ascending angular velocity:
             1 => Comparer<Phasor>.Create((a, b) => Math.Abs(a.Frequency).CompareTo(Math.Abs(b.Frequency))),
-            //maybe a random option for fun?
+            //maybe adding a random option for fun?
             _ => null
         };
         

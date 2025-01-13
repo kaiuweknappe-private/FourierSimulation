@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
@@ -8,12 +9,19 @@ using Avalonia.Media;
 
 namespace FourierSim.Controls;
 
+/// <summary>
+/// wasnt happy with LivePlot or OxyChart. So did my own custom Bar Chart here.
+/// not sure if that was the best idea.
+/// i would call it semi-generic (which makes also only semi sense).
+/// if u want to make something like this totally generic, u need to put way more work into this.
+/// but since it is for educational purposes only, its fine i guess. 
+/// </summary>
 public class BarChartControl : Control, IDisposable
 {
     #region Bindable Properties
-    public static readonly StyledProperty<ObservableCollection<Point>> PointsProperty =
-        AvaloniaProperty.Register<BarChartControl, ObservableCollection<Point>>(nameof(Points));
-    public ObservableCollection<Point> Points
+    public static readonly StyledProperty<ObservableCollection<Point>?> PointsProperty =
+        AvaloniaProperty.Register<BarChartControl, ObservableCollection<Point>?>(nameof(Points), defaultValue: null);
+    public ObservableCollection<Point>? Points
     {
         get => GetValue(PointsProperty);
         set => SetValue(PointsProperty, value);
@@ -73,23 +81,29 @@ public class BarChartControl : Control, IDisposable
     public double PaddingButtom => 20;
     public double YAxisPos => Bounds.Width / 2;
     public double XAxisPos => Bounds.Height - 20;
-    
+
+    //requires to click into the control first, to then be able to scroll/scale the chart
+    //so it doesnt interfere with a scrollview or something
+    //loses this "inline" focus on pointerExit
+    private bool _isFocused;
+
+    //private ToolTip _toolTip;
     #endregion
-    
     
     public BarChartControl()
     {
         PointsProperty.Changed.AddClassHandler<BarChartControl>((x, e) => x.OnPointsChanged(e));
-        this.GetObservable(SelectedBarProperty).Subscribe(_ =>
+        SelectedBarProperty.Changed.AddClassHandler<BarChartControl>((_, _) => InvalidateVisual());
+        
+        //init tooltip
+        /*_toolTip = new ToolTip()
         {
-            InvalidateVisual();
-        });
-        
-        PointerEntered += OnPointerEntered;
-        PointerExited += OnPointerExited;
-        
+            IsVisible = false,
+            Background = new SolidColorBrush(Colors.OrangeRed)
+        };
+        ToolTip.SetTip(this, _toolTip);*/
+
     }
-    
     
     #region Update Collection handling
     private void OnPointsChanged(AvaloniaPropertyChangedEventArgs e)
@@ -104,7 +118,7 @@ public class BarChartControl : Control, IDisposable
             newPoints.CollectionChanged += OnPointsCollectionChanged;
         }
 
-        InvalidateVisual(); //Redraw because the Property of the collection changed
+        InvalidateVisual(); //Redraw because the instance of the collection changed
     }
 
     private void OnPointsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -113,6 +127,7 @@ public class BarChartControl : Control, IDisposable
     }
     #endregion
 
+    #region Rendering itself
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -131,10 +146,33 @@ public class BarChartControl : Control, IDisposable
         context.DrawLine(axisPen, new Point(0, XAxisPos), new Point(Bounds.Width, XAxisPos)); // X-axis
         context.DrawLine(axisPen, new Point(YAxisPos, 0), new Point(YAxisPos, Bounds.Height)); // Y-axis
 
+        //arrows at end of axis
+        //x-axis 
+        var geometry = new StreamGeometry();
+        using (var ctx = geometry.Open())
+        {
+            var middlePoint = new Point(Bounds.Width - 10, Bounds.Height - PaddingButtom);
+            ctx.BeginFigure(new Point(middlePoint.X, middlePoint.Y -5), true);
+            ctx.LineTo(new Point(middlePoint.X + 10, middlePoint.Y));
+            ctx.LineTo(new Point(middlePoint.X, middlePoint.Y +5));
+            ctx.EndFigure(true);
+        }
+        context.DrawGeometry(Brushes.Black, null, geometry);
+        //y-axis
+        using (var ctx = geometry.Open())
+        {
+            var middlePoint = new Point(YAxisPos, 10);
+            ctx.BeginFigure(new Point(middlePoint.X - 5, middlePoint.Y), true);
+            ctx.LineTo(new Point(middlePoint.X, 0));
+            ctx.LineTo(new Point(middlePoint.X + 5, middlePoint.Y));
+            ctx.EndFigure(true);
+        }
+        context.DrawGeometry(Brushes.Black, null, geometry);
+        
         // Draw axis labels
-        var textFormat = new FormattedText(XAxisLabel ?? "", CultureInfo.CurrentCulture, FlowDirection.RightToLeft, Typeface.Default, 10, Brushes.Black);
-        context.DrawText(textFormat, new Point(Bounds.Width - 80, Bounds.Height - 20));
-        textFormat = new FormattedText(YAxisLabel ?? "", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, Typeface.Default, 10, Brushes.Black);
+        var textFormat = new FormattedText(XAxisLabel, CultureInfo.CurrentCulture, FlowDirection.RightToLeft, new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.Bold), 13, Brushes.Black);
+        context.DrawText(textFormat, new Point(Bounds.Width - 110, Bounds.Height - PaddingButtom - 25));
+        textFormat = new FormattedText(YAxisLabel, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(FontFamily.Default, FontStyle.Normal, FontWeight.Bold), 13, Brushes.Black);
         context.DrawText(textFormat, new Point(YAxisPos + 10, 10));
     }
     private void DrawBars(DrawingContext context)
@@ -153,23 +191,38 @@ public class BarChartControl : Control, IDisposable
             var barX = YAxisPos + (point.X * barWidth) - (barWidth / 2);
             var barHeight = Math.Min(point.Y * VerticalScale, maxBarHeight);
             var barY = XAxisPos - barHeight;
-    
+
             // Bar fill
             var barBrush = SelectedBar == Convert.ToInt32(point.X) ? Brushes.OrangeRed : Brushes.Blue;
             var barRect = new Rect(barX, barY, barWidth, barHeight);
             context.FillRectangle(barBrush, barRect);
 
             // Outline
-            var barPen = new Pen(Brushes.Black, 2);
+            var barPen = new Pen(Brushes.Gray, 1);
             context.DrawRectangle(barPen, barRect);
+
+            //x-axies label
+            if (barWidth >= 20 || barWidth >= 5 && (int)point.X % 5 == 0)
+            {
+                var xTagPos = new Point(YAxisPos + point.X * barWidth, Bounds.Height - PaddingButtom + 4);
+                var text = new FormattedText(((int)point.X).ToString(), CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, Typeface.Default, 10, Brushes.Black);
+                context.DrawText(text, xTagPos);
+                var rect = new Rect(new Point(xTagPos.X, xTagPos.Y - 4), new Size(1, 4));
+                context.DrawRectangle(new Pen(Brushes.Black, 1), rect);
+            }
         }
     }
+    
+    #endregion 
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
         
-        if (Points is null) return;
+        if (Points == null || !Points.Any()) return;
+        //set focus so its scrollable now
+        _isFocused = true;
         
         var point = e.GetPosition(this);
         var barWidth = HorizontalScale;
@@ -188,7 +241,10 @@ public class BarChartControl : Control, IDisposable
             var barRect = new Rect(barX, barY, barWidth, barHeight);
             if (barRect.Contains(point))
             {
-                SelectedBar = Convert.ToInt32(pointData.X); // Update the selected bar
+                //Toggle the selection of that bar
+                var bar = Convert.ToInt32(pointData.X);
+                SelectedBar = bar == SelectedBar ? null : bar;
+                
                 InvalidateVisual();
                 break;
             }
@@ -196,33 +252,42 @@ public class BarChartControl : Control, IDisposable
     }
     
     #region handling scaling interactivity
-    private void OnPointerEntered(object? sender, PointerEventArgs e)
+    
+    protected override void OnPointerEntered(PointerEventArgs e)
     {
-        Focus();
+        base.OnPointerEntered(e);
+        
         PointerWheelChanged += OnPointerWheelChanged;
         //Console.Write("Entered");
     }
-
-    private void OnPointerExited(object? sender, PointerEventArgs e)
+    
+    protected override void OnPointerExited(PointerEventArgs e)
     {
+        base.OnPointerExited(e);
+        
+        _isFocused = false;
         PointerWheelChanged -= OnPointerWheelChanged;
         //Console.Write("Exited");
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+        if(!_isFocused) return;
+        
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift)) //vertical
         {
-            VerticalScale += e.Delta.Y * 0.2;
-            VerticalScale = Math.Clamp(VerticalScale, 0.01, 5); //scroling limit
+            VerticalScale += e.Delta.Y * 0.1; //scrolling sensitivity
+            VerticalScale = Math.Clamp(VerticalScale, 0.01, 10); //scrolling limit
         }
-        else
+        else //horizontal
         {
-            HorizontalScale += e.Delta.Y * 1;
-            HorizontalScale = Math.Clamp(HorizontalScale, 5, 50); //scroling limit
+            HorizontalScale += e.Delta.Y * 1; //scrolling sensitivity
+            HorizontalScale = Math.Clamp(HorizontalScale, 5, 50); //scrolling limit
         }
         
-        e.Handled = true; // needed?
+        //so nothing else reacts to the scroll routed event
+        e.Handled = true; 
+        
         InvalidateVisual();
     }
     #endregion
@@ -244,7 +309,7 @@ public class BarChartControl : Control, IDisposable
 
         return new Size(width, height);
     }
-
+    
     protected override Size ArrangeOverride(Size finalSize)
     {
         return finalSize;
@@ -253,10 +318,10 @@ public class BarChartControl : Control, IDisposable
 
     public void Dispose()
     {
-        PointerEntered -= OnPointerEntered;
-        PointerExited -= OnPointerExited;
         PointerWheelChanged -= OnPointerWheelChanged;
+        
+        if(Points != null)
+            Points.CollectionChanged -= OnPointsCollectionChanged;
     }
-    
     
 }
