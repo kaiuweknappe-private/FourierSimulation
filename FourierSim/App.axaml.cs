@@ -53,6 +53,7 @@ public class App : Application // why not partial needed?
     {
         //ViewModels: (maybe use transient for refresh)
         services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<MainMenuViewModel>();
         services.AddSingleton<ShapeAnalyzerViewModel>();
 
         //Services:

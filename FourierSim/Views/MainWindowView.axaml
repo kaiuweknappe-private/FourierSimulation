@@ -10,15 +10,22 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="FourierSim">
     
-    <Grid>
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Height="40" Background="Gray" >
-            <Menu.Items>
-                <Label>hi</Label>
-            </Menu.Items>
-            <Button HorizontalAlignment="Center" Content="switch view" Command="{Binding SwitchViewCommand}" CommandParameter="ShapeAnalyzer" />
+        <Menu DockPanel.Dock="Top" Background="Gray">
+            <MenuItem Header="Navigate">
+                <MenuItem Header="Home" Command="{Binding SwitchViewCommand}" CommandParameter="MainMenu"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo"/>
+                <MenuItem Header="Redo"/>
+            </MenuItem>
+
+            <MenuItem Header="Help">
+                <MenuItem Header="About"/>
+            </MenuItem>
         </Menu>
         <ContentControl Content="{Binding CurrentViewModel}"/>
     </DockPanel>
-    </Grid>
 </Window>

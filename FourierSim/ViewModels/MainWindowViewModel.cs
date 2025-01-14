@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FourierSim.Models;
@@ -23,12 +24,17 @@ public partial class MainWindowViewModel : ViewModelBase
         _navigationService.NavigationRequested += OnNavigationRequested;
         
         //default view.. event. homeView machen ?
-        CurrentViewModel = _services.GetRequiredService<ShapeAnalyzerViewModel>();
+        CurrentViewModel = _services.GetRequiredService<MainMenuViewModel>();
     }
 
     [ObservableProperty] 
     private ViewModelBase? currentViewModel;
 
+    private void OnNavigationRequested(object? sender, NavigationMessage e)
+    {
+        CurrentViewModel = _services.GetRequiredService(e.ViewModelType) as ViewModelBase;
+    }
+    
     [RelayCommand]
     private void SwitchView(string viewName)
     {
@@ -37,13 +43,17 @@ public partial class MainWindowViewModel : ViewModelBase
             case "ShapeAnalyzer": 
                 _navigationService.NavigateTo<ShapeAnalyzerViewModel>();
                 break;
+            case "MainMenu": 
+                _navigationService.NavigateTo<MainMenuViewModel>();
+                break;
             // ..
         }
     }
-    
-    private void OnNavigationRequested(object? sender, NavigationMessage e)
+
+    [RelayCommand]
+    private void Exit()
     {
-        CurrentViewModel = _services.GetRequiredService(e.ViewModelType) as ViewModelBase;
+        if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.Shutdown();
     }
-    
 }
