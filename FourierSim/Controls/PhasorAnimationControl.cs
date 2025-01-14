@@ -57,6 +57,21 @@ public class PhasorAnimationControl : Control
         set => SetValue(IsRunningProperty, value);
     }
 
+    public static readonly StyledProperty<int> TimeOffsetProperty = 
+        AvaloniaProperty.Register<PhasorAnimationControl, int>(nameof(TimeOffset), defaultValue: 0);
+    public int TimeOffset
+    {
+        get => GetValue(TimeOffsetProperty);
+        set => SetValue(TimeOffsetProperty, value);
+    }
+
+    public static readonly StyledProperty<bool> PhasorVisibilityProperty =
+        AvaloniaProperty.Register<PhasorAnimationControl, bool>(nameof(PhasorVisibility), defaultValue: true);
+    public bool PhasorVisibility
+    {
+        get => GetValue(PhasorVisibilityProperty);
+        set => SetValue(PhasorVisibilityProperty, value);
+    }
     #endregion
     
     #region fields
@@ -65,6 +80,7 @@ public class PhasorAnimationControl : Control
     private readonly Stopwatch _stopwatch = new(); //for independent simulation time
     private int _lastUpdateTime;
     private readonly List<Point> _trail = new();
+    
     #endregion
 
     public PhasorAnimationControl()
@@ -91,14 +107,20 @@ public class PhasorAnimationControl : Control
             {
                 newPoints.CollectionChanged += OnPhasorsCollectionChanged;
             }
-            
-            Restart();
-            InvalidateVisual();
+
+            RestartAndRefresh();
         });
 
+        SimulationStepSizeProperty.Changed.AddClassHandler<PhasorAnimationControl>((_, _) => RestartAndRefresh());
+        SelectedFrequencyProperty.Changed.AddClassHandler<PhasorAnimationControl>((_, _) => InvalidateVisual());
+        TimeOffsetProperty.Changed.AddClassHandler<PhasorAnimationControl>((_, _) => RestartAndRefresh());
+        PhasorVisibilityProperty.Changed.AddClassHandler<PhasorAnimationControl>((_, _) => InvalidateVisual());
     }
 
-    private void OnPhasorsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    
+    private void OnPhasorsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => RestartAndRefresh();
+
+    private void RestartAndRefresh()
     {
         Restart();
         InvalidateVisual();
@@ -118,7 +140,7 @@ public class PhasorAnimationControl : Control
     {
         base.Render(context);
 
-        var currentTime = (int)(TimeFactor * _stopwatch.ElapsedMilliseconds);
+        var currentTime = (int)((TimeFactor * _stopwatch.ElapsedMilliseconds) + TimeOffset);
         
         //statefull part (interpolation):
             //independent simulation frequency reqiered to ensure consistency/correctness
@@ -139,6 +161,7 @@ public class PhasorAnimationControl : Control
 
     private void Interpolation(int currentTime)
     {
+        //adding to trail in SimulationStepSize-Interval
         while (_lastUpdateTime + SimulationStepSize <= currentTime)
         {
             var interpolationTime = ((double)_lastUpdateTime + SimulationStepSize) / 1000; // in seconds
@@ -149,7 +172,7 @@ public class PhasorAnimationControl : Control
                 var r = phasor.Magnitude;
                 var phi = 2.0 * Math.PI * interpolationTime * phasor.Frequency + phasor.Phase;
                   
-                point += new Point(Math.Cos(phi) * r, Math.Sin(phi) * r); //correct order x/re <-> y/im ?
+                point += new Point(Math.Cos(phi) * r, Math.Sin(phi) * r);
             }
             
             _trail.Add(point);
@@ -171,6 +194,9 @@ public class PhasorAnimationControl : Control
                 lastPoint = point;
             }
         }
+
+        if (!PhasorVisibility)
+            return;
         
         //draw phasors:
         var startPoint = new Point(0, 0);

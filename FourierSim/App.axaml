@@ -2,19 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="FourierSim.App"
              xmlns:local="using:FourierSim"
-             xmlns:vm="clr-namespace:FourierSim.ViewModels"
-             xmlns:v="clr-namespace:FourierSim.Views"
+             xmlns:converter="clr-namespace:FourierSim.Converter"
              RequestedThemeVariant="Default">
              
     <Application.DataTemplates>
         <local:ViewLocator/>
-        
-        <DataTemplate DataType="{x:Type vm:ShapeAnalyzerViewModel}">
-            <v:ShapeAnalyzerView />
-        </DataTemplate>
     </Application.DataTemplates>
-  
+    
+    <Application.Resources>
+        <!--global value converter-->
+        <converter:BoolInverterConverter x:Key="BoolInverterConverter"/>
+        <converter:StringToNullableIntConverter x:Key="StringToNullableIntConverter"/>
+    </Application.Resources>
+        
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://FourierSim/Styles/GlobalStyles.axaml"/>
     </Application.Styles>
 </Application>

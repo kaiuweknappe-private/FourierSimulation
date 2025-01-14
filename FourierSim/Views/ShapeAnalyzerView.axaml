@@ -11,11 +11,6 @@
              x:Class="FourierSim.Views.ShapeAnalyzerView"
              x:DataType="vm:ShapeAnalyzerViewModel">
     
-    <UserControl.Resources>
-        <converter:BoolInverterConverter x:Key="BoolInverterConverter"/>
-        <converter:StringToNullableIntConverter x:Key="StringToNullableIntConverter"/>
-    </UserControl.Resources>
-    
     <ScrollViewer>
         <StackPanel>
             <Grid ColumnDefinitions="*, *" >
@@ -38,11 +33,11 @@
                         </Interaction.Behaviors>
                         </Canvas>
                     </Grid>
-                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="160">
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="190">
                         <Grid ColumnDefinitions="*,*">
                             <StackPanel Grid.Column="0">
-                                <CheckBox IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
-                                <CheckBox IsChecked="{Binding IsResampleVisible}" Content="Show Resampled Points"/>
+                                <CheckBox Classes="VisibilityToggle" IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>  <!--label daneben packen noch-->
+                                <CheckBox Classes="VisibilityToggle" IsChecked="{Binding IsResampleVisible}" Content="Show Resampled Points"/>
                             </StackPanel>
                             <DockPanel Grid.Column="1">
                                 <Label DockPanel.Dock="Top" HorizontalAlignment="Center" Content="{Binding Value, ElementName=SampleDensitySlider, StringFormat='Sample Density: {0:F2}'}"/>
@@ -53,74 +48,77 @@
                 </StackPanel>
                 
                 <StackPanel Grid.Column="1" Margin="5">
-                    <controls:PhasorAnimationControl Height="600" ClipToBounds="True" 
+                    <controls:PhasorAnimationControl Height="600" ClipToBounds="True" PhasorVisibility="{Binding PhasorVisibility}"
                                                      SimulationStepSize="{Binding SimulationStepSize}" 
                                                      Phasors="{Binding AnimationPhasors}" 
                                                      TimeFactor="{Binding TimeFactor}" 
                                                      SelectedFrequency="{Binding SelectedFrequency}"
-                                                     IsRunning="{Binding IsAnimationRunning}"/>
-                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="160">
-                        <Grid ColumnDefinitions="*,10,*">
-                            <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
-                                <DockPanel >
-                                    <ToggleButton DockPanel.Dock="Left" Width="60" Height="40" Margin="0,0,10,0" IsChecked="{Binding IsAnimationRunning}" HorizontalAlignment="Center">
-                                        <Grid>
-                                            <icons:Icon FontSize="20" Value="fa-solid fa-play" IsVisible="{Binding IsAnimationRunning, Converter={StaticResource BoolInverterConverter}}" />
-                                            <icons:Icon FontSize="20" Value="fa-solid fa-pause" IsVisible="{Binding IsAnimationRunning}" />
-                                        </Grid>
-                                    </ToggleButton>
-                                    <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
-                                    <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}"  Margin="7,0"/>
-                                </DockPanel> 
-                                <Label Content="Animation Interval: 16 ms" HorizontalAlignment="Center" />
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Label Content="Simulation Interval: " />
-                                    <Label Width="20" Content="{Binding SimulationStepSize}" />
-                                    <Label Content=" ms" />
-                                    <Border Margin="10,0,0,0" Padding="1" BorderBrush="LightGray" BorderThickness="2" CornerRadius="4">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="-1" Width="25" Height="25">
-                                                <icons:Icon Value="fa-solid fa-minus" FontSize="10"/>
-                                            </Button>
-                                            <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Width="25" Height="25">
-                                                <icons:Icon Value="fa-solid fa-plus" FontSize="10"/>
-                                            </Button>
-                                        </StackPanel>
+                                                     TimeOffset="{Binding TimeSelection}"
+                                                     IsRunning="{Binding IsAnimationRunning}"/> 
+                    <Border BorderThickness="3" BorderBrush="Beige" Padding="10,0" Background="Gray" Height="190">
+                            <Grid ColumnDefinitions="*,10,*">
+                                <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
+                                    <DockPanel >
+                                        <ToggleButton DockPanel.Dock="Left" IsEnabled="{Binding IsManuallySettingTime, Converter={StaticResource BoolInverterConverter}}" Width="60" Height="40" Margin="0,0,10,0" IsChecked="{Binding IsAnimationRunning}" HorizontalAlignment="Center">
+                                            <Grid>
+                                                <icons:Icon FontSize="20" Value="fa-solid fa-play" IsVisible="{Binding IsAnimationRunning, Converter={StaticResource BoolInverterConverter}}" />
+                                                <icons:Icon FontSize="20" Value="fa-solid fa-pause" IsVisible="{Binding IsAnimationRunning}" />
+                                            </Grid>
+                                        </ToggleButton>
+                                        <CheckBox Classes="VisibilityToggle" IsChecked="{Binding PhasorVisibility}"/>
+                                        <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
+                                        <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}"  Margin="7,0"/>
+                                    </DockPanel> 
+                                    <Border Background="DimGray" BorderBrush="Black" BorderThickness="2" Padding="10,0">
+                                        <DockPanel>
+                                            <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsManuallySettingTime}" VerticalAlignment="Center"/>
+                                            <Label DockPanel.Dock="Left" Content="{Binding AnimationProgress}" VerticalAlignment="Center" MinWidth="60" HorizontalContentAlignment="Center"/>
+                                            <Slider Minimum="0" Maximum="1000" IsSnapToTickEnabled="True" TickFrequency="1" Value="{Binding TimeSelection}" IsEnabled="{Binding IsManuallySettingTime}"/>
+                                        </DockPanel>
                                     </Border>
-                                </StackPanel>      
-                                <StackPanel Orientation="Horizontal" Margin="0,2" HorizontalAlignment="Center">
-                                    <Label Content="Sort Phasors by:" />
-                                    <ComboBox Margin="10,0,10,0" HorizontalAlignment="Stretch" SelectedIndex="0">
-                                        <ComboBoxItem Content="descending magnitude"/>
-                                        <ComboBoxItem Content="ascending angular velocity"/>
-                                        <Interaction.Behaviors>
-                                            <behaviors:ComboBoxSelectionChangedBehavior OnSelectionChangedCommand="{Binding SwitchPhasorSortingCommand}"/>
-                                        </Interaction.Behaviors>
-                                    </ComboBox>
+                                    <Label Content="Animation Interval: 16 ms" HorizontalAlignment="Center" Margin="0,5"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Label Content="{Binding SimulationStepSize, StringFormat='Simulation Interval: {0} ms'}" />
+                                        <Border Margin="10,0,0,0" Padding="1" BorderBrush="LightGray" BorderThickness="2" CornerRadius="4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="-1" Width="25" Height="25">
+                                                    <icons:Icon Value="fa-solid fa-minus" FontSize="10"/>
+                                                </Button>
+                                                <Button Command="{Binding ChangeSimulationStepSizeCommand}" CommandParameter="1" Width="25" Height="25">
+                                                    <icons:Icon Value="fa-solid fa-plus" FontSize="10"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>      
                                 </StackPanel>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <controls:RangeSliderControl Height="50" Minimum="-100" Maximum="100" 
-                                                             LowerValue="{Binding SelectedLowerFrequency}"
-                                                             UpperValue="{Binding SelectedUpperFrequency}"
-                                                             TickInterval="1"
-                                                             OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
-                                <Border Background="DimGray" BorderBrush="Black" BorderThickness="2" Padding="10,0"> 
-                                    <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, 15">
-                                        <CheckBox Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0" IsChecked="{Binding LimitFrequencies}"/>
-                                        <Slider Grid.Column="1" Grid.Row="0" TickFrequency="1" IsSnapToTickEnabled="True" Minimum="0"  
-                                                IsEnabled="{Binding LimitFrequencies}"
-                                                Maximum="{Binding FrequenciesAmount}"
-                                                Value="{Binding SelectedFrequenciesAmount}"/>
-                                        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
-                                            <Label Content="Only include the"/>
-                                            <Label Content="{Binding SelectedFrequenciesAmount}"/>
-                                            <Label Content="-most important Frequencies"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                        </Grid>
+                                <StackPanel Grid.Column="2">
+                                    <controls:RangeSliderControl Height="40" Margin="8,10" Minimum="-100" Maximum="100" 
+                                                                 LowerValue="{Binding SelectedLowerFrequency}"
+                                                                 UpperValue="{Binding SelectedUpperFrequency}"
+                                                                 TickInterval="1"
+                                                                 OnSelectionChangedCommand="{Binding UpdateFrequenciesCommand}"/>
+                                    <Border Background="DimGray" BorderBrush="Black" BorderThickness="2" Padding="10,0"> 
+                                        <Grid ColumnDefinitions="Auto, *" RowDefinitions="Auto, 15">
+                                            <CheckBox Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0" IsChecked="{Binding LimitFrequencies}"/>
+                                            <Slider Grid.Column="1" Grid.Row="0" TickFrequency="1" IsSnapToTickEnabled="True" Minimum="0"  
+                                                    IsEnabled="{Binding LimitFrequencies}"
+                                                    Maximum="{Binding FrequenciesAmount}"
+                                                    Value="{Binding SelectedFrequenciesAmount}"/>
+                                            <Label Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" Content="{Binding SelectedFrequenciesAmount, StringFormat='Only include the {0}-most important Frequencies'}"/>
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2" HorizontalAlignment="Center">
+                                        <Label Content="Sort Phasors by:" />
+                                        <ComboBox Margin="10,0,10,0" HorizontalAlignment="Stretch" SelectedIndex="0">
+                                            <ComboBoxItem Content="descending magnitude"/>
+                                            <ComboBoxItem Content="ascending angular velocity"/>
+                                            <Interaction.Behaviors>
+                                                <behaviors:ComboBoxSelectionChangedBehavior OnSelectionChangedCommand="{Binding SwitchPhasorSortingCommand}"/>
+                                            </Interaction.Behaviors>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
                     </Border>
                 </StackPanel>
             </Grid>    

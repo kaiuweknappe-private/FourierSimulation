@@ -144,9 +144,29 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool isAnimationRunning = false;
+
+    [ObservableProperty] 
+    private bool isManuallySettingTime = false;
+    partial void OnIsManuallySettingTimeChanged(bool value)
+    {
+        if (!value)
+            TimeSelection = 0;
+        else
+            IsAnimationRunning = false; //maybe prevent the user from pressing play again during ismanualysettingtime ?
+    }
+
+    //offsets the animation-start within the cycle
+    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(AnimationProgress))]
+    private int timeSelection;
+
+    public string AnimationProgress => ((double)TimeSelection / 10).ToString("F1") + " %";
     
     [ObservableProperty]
     private double timeFactor = .1;
+
+    [ObservableProperty] 
+    private bool phasorVisibility = true;
 
     [ObservableProperty] 
     private int simulationStepSize = 5;

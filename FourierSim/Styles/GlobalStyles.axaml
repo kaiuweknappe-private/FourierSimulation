@@ -1,0 +1,28 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <CheckBox Classes="VisibilityToggle"/>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="CheckBox.VisibilityToggle">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel Orientation="Horizontal">
+                    <Border BorderThickness="2" BorderBrush="Black" CornerRadius="7" Background="Transparent" IsHitTestVisible="True" Padding="3">
+                        <Grid VerticalAlignment="Center">
+                            <icons:Icon Value="fa-solid fa-eye" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="MediumBlue"
+                                        IsVisible="{TemplateBinding IsChecked}" />
+                            <icons:Icon Value="fa-solid fa-eye-slash" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="DarkBlue"
+                                        IsVisible="{TemplateBinding IsChecked, Converter={StaticResource BoolInverterConverter}}" />
+                        </Grid>
+                    </Border>
+                    <Label Content="{TemplateBinding Content}" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    
+</Styles>
