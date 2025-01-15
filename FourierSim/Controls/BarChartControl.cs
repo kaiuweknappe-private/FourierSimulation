@@ -134,7 +134,10 @@ public class BarChartControl : Control, IDisposable
         
         //background:
         context.DrawRectangle(Background, null, new Rect(Bounds.Size));
-        
+        //frame when focused
+        if(_isFocused)
+            context.DrawRectangle(null, new Pen(new SolidColorBrush(Colors.OrangeRed), 5), new Rect(Bounds.Size));
+            
         DrawBars(context);
         DrawGraph(context);
     }
@@ -244,11 +247,10 @@ public class BarChartControl : Control, IDisposable
                 //Toggle the selection of that bar
                 var bar = Convert.ToInt32(pointData.X);
                 SelectedBar = bar == SelectedBar ? null : bar;
-                
-                InvalidateVisual();
                 break;
             }
         }
+        InvalidateVisual();
     }
     
     #region handling scaling interactivity
@@ -266,6 +268,8 @@ public class BarChartControl : Control, IDisposable
         base.OnPointerExited(e);
         
         _isFocused = false;
+        InvalidateVisual();
+        
         PointerWheelChanged -= OnPointerWheelChanged;
         //Console.Write("Exited");
     }

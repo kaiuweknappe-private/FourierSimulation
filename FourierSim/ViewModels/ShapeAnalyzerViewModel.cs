@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FourierSim.Models;
@@ -32,25 +33,24 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     [ObservableProperty] private bool isResampleVisible = false;
 
-    [ObservableProperty] private double sampleDensity = 2.0;
+    [ObservableProperty] private double sampleDensity = 1;
 
-    partial void OnSampleDensityChanged(double oldValue, double newValue)
+    [ObservableProperty] private double loopLength;
+    
+    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(NyquistShannonFrequency))]
+    private int sampleCount;
+    public int NyquistShannonFrequency => SampleCount / 2;
+
+    partial void OnSampleDensityChanged(double value)
     {
-        if (Math.Abs(oldValue - newValue) > 0.01)
-            Update();
+        Update();
     }
 
     [RelayCommand]
     private void StartDrawing(Point point)
     {
-        //reset:
-        ResampledPoints.Clear();
-        Points.Clear();
-        MagnitudePlot.Clear();
-        PhasePlot.Clear();
-        SelectedFrequency = null;
-        IsAnimationRunning = false;
-        AnimationPhasors.Clear();
+        Reset();
 
         Points.Add(point);
         IsDrawing = true;
@@ -73,8 +73,8 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     private void Update()
     {
-        if (Points.Count <= 1) return;
-
+        if (Points.Count <= 2) return;
+        
         Analyze();
     }
 
@@ -99,15 +99,17 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     private void Analyze()
     {
-        var uniformSignal = _resamplingService.GetResample(Points, SampleDensity);
-
+        var uniformSignal = _resamplingService.GetResample(Points, SampleDensity, out var totalLength);
+        LoopLength = totalLength;
+        SampleCount = uniformSignal.Count;
+        
         //update resampled-points collection:
         ResampledPoints = new ObservableCollection<Point>(uniformSignal.Values);
-        _spectrum = _fourierService.GetCoefficientSpectrum(uniformSignal, -100, 100);
-
+        _spectrum = _fourierService.GetCoefficientSpectrum(uniformSignal, -150, 150);
+        OnPropertyChanged(nameof(SelectedCoefficient));
+        
         //update coefficient Plots:
-        MagnitudePlot =
-            new ObservableCollection<Point>(_spectrum.Select(frequency =>
+        MagnitudePlot = new ObservableCollection<Point>(_spectrum.Select(frequency =>
                 new Point(frequency.Key, frequency.Value.Magnitude)));
         PhasePlot = new ObservableCollection<Point>(_spectrum.Select(frequency =>
         {
@@ -141,7 +143,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
             return $"{c.Magnitude:F2} ∠ {c.Phase / Math.PI:F2} π ({phase * 180/Math.PI:F2} \u00b0)";
         }
     }
-
+    
     [ObservableProperty]
     private bool isAnimationRunning = false;
 
@@ -152,7 +154,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
         if (!value)
             TimeSelection = 0;
         else
-            IsAnimationRunning = false; //maybe prevent the user from pressing play again during ismanualysettingtime ?
+            IsAnimationRunning = false;
     }
 
     //offsets the animation-start within the cycle
@@ -173,12 +175,12 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FrequenciesAmount))]
-    private double selectedLowerFrequency = -20;
+    private int selectedLowerFrequency = -20;
     
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FrequenciesAmount))]
-    private double selectedUpperFrequency = 20;
-
+    private int selectedUpperFrequency = 20;
+    
     [ObservableProperty] 
     private bool limitFrequencies = false;
     partial void OnLimitFrequenciesChanged(bool oldValue, bool newValue)
@@ -188,13 +190,13 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     }
 
     [ObservableProperty] 
-    private double selectedFrequenciesAmount = 2;
-    partial void OnSelectedFrequenciesAmountChanged(double value)
+    private int selectedFrequenciesAmount = 2;
+    partial void OnSelectedFrequenciesAmountChanged(int value)
     {
         UpdateFrequencies();
     }
     
-    public double FrequenciesAmount => Math.Abs(SelectedUpperFrequency - SelectedLowerFrequency) + 1; 
+    public int FrequenciesAmount => Math.Abs(SelectedUpperFrequency - SelectedLowerFrequency) + 1; 
     
     [RelayCommand]
     private void UpdateFrequencies()
@@ -202,22 +204,21 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
         if(_spectrum.Count <= 0) return;
 
         //collect all phasors according to freq selection: (freq 0 is always added)  
-        var newPhasorCollection = new List<Phasor>();
-        newPhasorCollection.Add(new Phasor(0, _spectrum[0].Magnitude, _spectrum[0].Phase));
-        for (var frequency = (int)SelectedLowerFrequency; frequency <= (int)SelectedUpperFrequency; frequency++) 
+        var newPhasorCollection = new List<Phasor> { new Phasor(0, _spectrum[0].Magnitude, _spectrum[0].Phase) };
+        for (var frequency = SelectedLowerFrequency; frequency <= SelectedUpperFrequency; frequency++) 
         {
             if (frequency != 0) 
                 newPhasorCollection.Add(new Phasor(frequency, _spectrum[frequency].Magnitude, _spectrum[frequency].Phase));
         }
         
-        //limit frequencies: only select the highest {SelectedFrequenciesAmount}-frequencies (by mag.) 
+        //limit frequencies: only select the highest {SelectedFrequenciesAmount}-frequencies (by mag.) (probably not efficient)
         if (LimitFrequencies)
         {
             //sort by ascending mag:
             newPhasorCollection.Sort((a, b) => a.Magnitude.CompareTo(b.Magnitude));
             
             //remove most insignificant to match {SelectedFrequenciesAmount}-frequencies
-            newPhasorCollection.RemoveRange(0, newPhasorCollection.Count - (int)SelectedFrequenciesAmount);
+            newPhasorCollection.RemoveRange(0, newPhasorCollection.Count - SelectedFrequenciesAmount);
         }
         
         //sort and update PhasorCollection 
@@ -255,8 +256,23 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private void ChangeSelectedFrequency(string change)
     {
         if (SelectedFrequency == null || !int.TryParse(change, out var value)) return;
-        SelectedFrequency = Math.Clamp((int)SelectedFrequency + value, -100, 100);
+        SelectedFrequency = Math.Clamp((int)SelectedFrequency + value, -150, 150);
     }
     
     #endregion
+
+    [RelayCommand]
+    private void Reset()
+    {
+        SelectedFrequency = null;
+        IsAnimationRunning = false;
+        LoopLength = 0;
+        SampleCount = 0;
+        
+        Points.Clear();
+        ResampledPoints.Clear();
+        AnimationPhasors.Clear();
+        MagnitudePlot.Clear();
+        PhasePlot.Clear();
+    }
 }

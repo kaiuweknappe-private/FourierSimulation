@@ -139,11 +139,14 @@ public class PhasorAnimationControl : Control
     public override void Render(DrawingContext context)
     {
         base.Render(context);
-
+        //background:
+        context.DrawRectangle(new SolidColorBrush(Colors.Beige), null, new Rect(Bounds.Size));
+        if(Phasors.Count == 0) return;
+        
         var currentTime = (int)((TimeFactor * _stopwatch.ElapsedMilliseconds) + TimeOffset);
         
         //statefull part (interpolation):
-            //independent simulation frequency reqiered to ensure consistency/correctness
+            //independent simulation frequency required to ensure consistency/correctness
         if (currentTime > 1000) //new revolution => reset
         {
             Restart();
@@ -151,7 +154,9 @@ public class PhasorAnimationControl : Control
         }
         else
         {
-            Interpolation(currentTime);
+            if(_trail.Count == 0)
+                _trail.Add(AggregateAllPhasorsAt(0));
+            Interpolation(currentTime);   
         }
         
         //stateless part ("regular" rendering):
@@ -165,25 +170,25 @@ public class PhasorAnimationControl : Control
         while (_lastUpdateTime + SimulationStepSize <= currentTime)
         {
             var interpolationTime = ((double)_lastUpdateTime + SimulationStepSize) / 1000; // in seconds
-            var point = new Point(0, 0);
-            
-            foreach (var phasor in Phasors)
-            {
-                var r = phasor.Magnitude;
-                var phi = 2.0 * Math.PI * interpolationTime * phasor.Frequency + phasor.Phase;
-                  
-                point += new Point(Math.Cos(phi) * r, Math.Sin(phi) * r);
-            }
-            
-            _trail.Add(point);
+            _trail.Add(AggregateAllPhasorsAt(interpolationTime));
             _lastUpdateTime += SimulationStepSize;
         }
     }
+    
+    private Point AggregateAllPhasorsAt(double time)
+    {
+        var point = new Point(0, 0);
+        foreach (var phasor in Phasors)
+        {
+            var r = phasor.Magnitude;
+            var phi = 2.0 * Math.PI * time * phasor.Frequency + phasor.Phase;
+            point += new Point(Math.Cos(phi) * r, Math.Sin(phi) * r);
+        }
+        return point;
+    }
+    
     private void Rendering(DrawingContext context, int currentTime)
     {
-        //background:
-        context.DrawRectangle(new SolidColorBrush(Colors.Beige), null, new Rect(Bounds.Size));
-        
         //draw trail:
         if(_trail.Count > 0)
         {

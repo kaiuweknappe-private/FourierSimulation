@@ -11,26 +11,30 @@ namespace FourierSim.Services;
 /// </summary>
 public interface IResamplingService
 {
-    Dictionary<double, Point> GetResample(IEnumerable<Point> points, double sampleDensity = 2);
-}
+    Dictionary<double, Point> GetResample(IEnumerable<Point> points, double sampleDensity, out double totalLength);
+} 
 
 public class ResamplingService : IResamplingService
 {
     
-    public Dictionary<double, Point> GetResample(IEnumerable<Point> points, double sampleDesity = 2)
+    public Dictionary<double, Point> GetResample(IEnumerable<Point> points, double sampleDensity, out double totalLength)
     {
-        if (points.Count() <= 1) return new();
-        
-        var totalLength = CalculateTotalLength(points);
+        if (points.Count() <= 1)
+        {
+            totalLength = 0;
+            return new Dictionary<double, Point>();
+        }
+
+        totalLength = CalculateTotalLength(points);
  
         //Input-Points with there respective normalized offset along the path from the first point (between 0 and 1):
         var inputSignal = Initialize(points, totalLength);
         
-        return Resample(inputSignal, sampleDesity, totalLength);
+        return Resample(inputSignal, sampleDensity, totalLength);
 
     }
 
-    private double CalculateTotalLength(IEnumerable<Point> points)
+    public double CalculateTotalLength(IEnumerable<Point> points)
     {
         return points.Aggregate(
             (total: 0.0, previous: points.First()),

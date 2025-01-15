@@ -34,13 +34,21 @@
                     </Grid>
                     <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="190">
                         <Grid ColumnDefinitions="*,*">
-                            <StackPanel Grid.Column="0">
-                                <CheckBox Classes="VisibilityToggle" IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>  <!--label daneben packen noch-->
-                                <CheckBox Classes="VisibilityToggle" IsChecked="{Binding IsResampleVisible}" Content="Show Resampled Points"/>
-                            </StackPanel>
+                            <Grid Grid.Column="0" RowDefinitions="*,*,*">
+                                <Button Grid.Row="0" Command="{Binding ResetCommand}">
+                                    <icons:Icon Value="fa-solid fa-trash" FontSize="16"/>
+                                </Button>
+                                <CheckBox Grid.Row="1" Classes="VisibilityToggle" IsChecked="{Binding IsDrawingVisible}" Content="Show Drawing"/>
+                                <CheckBox Grid.Row="2" Classes="VisibilityToggle" IsChecked="{Binding IsResampleVisible}" Content="Show Resampled Points"/>
+                            </Grid>
                             <DockPanel Grid.Column="1">
-                                <Label DockPanel.Dock="Top" HorizontalAlignment="Center" Content="{Binding Value, ElementName=SampleDensitySlider, StringFormat='Sample Density: {0:F2}'}"/>
-                                <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="SampleDensitySlider" Value="{Binding SampleDensity}" />
+                                <Label DockPanel.Dock="Top" HorizontalAlignment="Center" Content="{Binding SampleDensity, StringFormat='Sample Density: {0:F2}'}"/>
+                                <StackPanel DockPanel.Dock="Bottom" Margin="10">
+                                    <Label HorizontalAlignment="Center" Content="{Binding LoopLength, StringFormat='Length: {0:F2}'}"/>
+                                    <Label HorizontalAlignment="Center" Content="{Binding SampleCount, StringFormat='Sample Frequency: {0} hz'}" />
+                                    <Label HorizontalAlignment="Center" Content="{Binding NyquistShannonFrequency, StringFormat='Nyquist-Shannon Frequency: |{0}| hz'}" />
+                                </StackPanel>
+                                <Slider Minimum="0.01" Maximum="1" TickFrequency="0.01" IsSnapToTickEnabled="True" Value="{Binding SampleDensity}" />
                             </DockPanel>
                         </Grid>
                     </Border>
