@@ -5,7 +5,6 @@ using System.Numerics;
 namespace FourierSim.Services;
 
 /// <summary>
-/// decouples and encapsulates logic specifically needed in ShapeAnalyzerViewModel (thus manually instantiated there).
 /// made to work with an input signal that is mapped between 0 and 1 and sampled uniformly.
 /// calculates the complex coefficient (magnitude and phase information) for one or a range of arbitrary integer frequency's
 /// </summary>

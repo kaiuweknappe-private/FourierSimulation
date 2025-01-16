@@ -23,7 +23,6 @@ public partial class MainWindowViewModel : ViewModelBase
         
         _navigationService.NavigationRequested += OnNavigationRequested;
         
-        //default view.. event. homeView machen ?
         CurrentViewModel = _services.GetRequiredService<MainMenuViewModel>();
     }
 

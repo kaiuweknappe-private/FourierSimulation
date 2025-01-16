@@ -55,10 +55,13 @@ public class App : Application // why not partial needed?
         services.AddSingleton<MainWindowViewModel>();
         services.AddSingleton<MainMenuViewModel>();
         services.AddSingleton<ShapeAnalyzerViewModel>();
+        services.AddSingleton<CircleDrawingGameViewModel>();
 
         //Services:
         services.AddSingleton<INavigationService, NavigationService>();
-        
+        services.AddSingleton<IResamplingService, ResamplingService>();
+        services.AddSingleton<IFourierService, FourierSeries>();
+
     }
     
     

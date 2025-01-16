@@ -13,6 +13,9 @@ public partial class MainMenuViewModel(INavigationService navigationService) : V
             case "ShapeAnalyzer": 
                 navigationService.NavigateTo<ShapeAnalyzerViewModel>();
                 break;
+            case "CircleGame": 
+                navigationService.NavigateTo<CircleDrawingGameViewModel>();
+                break;
             // ..
         }
     }

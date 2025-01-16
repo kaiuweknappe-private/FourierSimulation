@@ -2,7 +2,7 @@
 
 namespace FourierSim.ViewModels;
 
-public class ViewModelBase : ObservableObject
+public class ViewModelBase : ObservableValidator
 {
     
 }

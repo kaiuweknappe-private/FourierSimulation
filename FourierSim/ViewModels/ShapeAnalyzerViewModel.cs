@@ -18,7 +18,7 @@ namespace FourierSim.ViewModels;
 /// In that case i would have to make e.g. the ResamplingService stateful and somehow manage that this vm knows when to update.">
 /// lets the user draw a loop and analyze the frequencies it consists of.
 /// </summary>
-public partial class ShapeAnalyzerViewModel : ViewModelBase
+public partial class ShapeAnalyzerViewModel(IResamplingService resamplingService, IFourierService fourierService) : ViewModelBase
 {
     #region Drawing Related
 
@@ -82,9 +82,6 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     #region plot and animation related
 
-    private readonly IResamplingService _resamplingService = new ResamplingService();
-    private readonly IFourierService _fourierService = new FourierSeries();
-
     private Comparer<Phasor>? _phasorSortingOrder;
     private Dictionary<int, Complex> _spectrum = new();
 
@@ -99,13 +96,13 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
 
     private void Analyze()
     {
-        var uniformSignal = _resamplingService.GetResample(Points, SampleDensity, out var totalLength);
+        var uniformSignal = resamplingService.GetResample(Points, SampleDensity, out var totalLength);
         LoopLength = totalLength;
         SampleCount = uniformSignal.Count;
         
         //update resampled-points collection:
         ResampledPoints = new ObservableCollection<Point>(uniformSignal.Values);
-        _spectrum = _fourierService.GetCoefficientSpectrum(uniformSignal, -150, 150);
+        _spectrum = fourierService.GetCoefficientSpectrum(uniformSignal, -100, 100);
         OnPropertyChanged(nameof(SelectedCoefficient));
         
         //update coefficient Plots:
@@ -256,7 +253,7 @@ public partial class ShapeAnalyzerViewModel : ViewModelBase
     private void ChangeSelectedFrequency(string change)
     {
         if (SelectedFrequency == null || !int.TryParse(change, out var value)) return;
-        SelectedFrequency = Math.Clamp((int)SelectedFrequency + value, -150, 150);
+        SelectedFrequency = Math.Clamp((int)SelectedFrequency + value, -100, 100);
     }
     
     #endregion

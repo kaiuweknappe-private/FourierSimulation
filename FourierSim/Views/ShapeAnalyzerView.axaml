@@ -73,8 +73,8 @@
                                             </Grid>
                                         </ToggleButton>
                                         <CheckBox Classes="VisibilityToggle" IsChecked="{Binding PhasorVisibility}"/>
-                                        <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{Binding Value, ElementName=TimeFactorSlider, StringFormat='Speed: {0:F2}x'}"/>
-                                        <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" x:Name="TimeFactorSlider" Value="{Binding TimeFactor}"  Margin="7,0"/>
+                                        <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{Binding TimeFactor, StringFormat='Speed: {0:F2}x'}"/>
+                                        <Slider Minimum="0.01" Maximum="2" TickFrequency="0.01" IsSnapToTickEnabled="True" Value="{Binding TimeFactor}"  Margin="7,0"/>
                                     </DockPanel> 
                                     <Border Background="DimGray" BorderBrush="Black" BorderThickness="2" Padding="10,0">
                                         <DockPanel>

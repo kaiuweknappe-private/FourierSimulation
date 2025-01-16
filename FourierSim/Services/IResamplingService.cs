@@ -4,7 +4,6 @@ using System.Linq;
 namespace FourierSim.Services;
 
 /// <summary>
-/// decouples and encapsulates logic specifically needed in ShapeAnalyzerViewModel (thus manually instantiated there).
 /// Resamples Points along a given loop/path at an arbitrary sample-density uniformly and maps them between 0 and 1.
 /// 
 /// Note: not really optimal implementation, probably should avoid using floating point and scale to integers in the first place..

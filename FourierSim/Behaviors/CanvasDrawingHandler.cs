@@ -54,22 +54,22 @@ public class CanvasDrawingHandler : Behavior<Canvas>
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        StartCommand?.Execute(e.GetPosition(AssociatedObject));
+        if(StartCommand?.CanExecute(e.GetPosition(AssociatedObject)) ?? false)
+            StartCommand?.Execute(e.GetPosition(AssociatedObject));
     }
 
     private void OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (MoveCommand?.CanExecute(e.GetPosition(AssociatedObject)) == true) 
+        if (!(MoveCommand?.CanExecute(e.GetPosition(AssociatedObject)) ?? false)) return;
+        
+        var position = e.GetPosition(AssociatedObject);
+        if (AssociatedObject is not Canvas canvas ||
+            position.X < 0 || position.Y < 0 || position.X > canvas.Bounds.Width || position.Y > canvas.Bounds.Height)
         {
-            var position = e.GetPosition(AssociatedObject);
-            if (AssociatedObject is not Canvas canvas ||
-                position.X < 0 || position.Y < 0 || position.X > canvas.Bounds.Width || position.Y > canvas.Bounds.Height)
-            {
-                StopCommand?.Execute(null);
-            } 
-            else
-                MoveCommand.Execute(position);
-        }
+            StopCommand?.Execute(null);
+        } 
+        else
+            MoveCommand.Execute(position);
     }
 
     private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)

@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:FourierSim.ViewModels"
+             xmlns:behaviors="clr-namespace:FourierSim.Behaviors"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FourierSim.Views.CircleDrawingGameView"
+             x:DataType="vm:CircleDrawingGameViewModel">
+    
+    <UserControl.Styles>
+        <Style Selector="Label">
+            <Setter Value="20" Property="FontSize"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <DockPanel>
+        <StackPanel Margin="10" DockPanel.Dock="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Label Content="Select a Frequency to Draw:" VerticalContentAlignment="Center"/>
+            <TextBox MinWidth="50" Margin="5,0" Name="InputBox" Text="{Binding SelectedFrequency, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        <Grid ColumnDefinitions="3*,*">
+            <Grid Grid.Column="0" Margin="10">
+                <Canvas Background="Beige" >
+                    <Polyline Points="{Binding Points}" Stroke="Blue" StrokeThickness="2"/>
+                    <Interaction.Behaviors>
+                        <behaviors:CanvasDrawingHandler
+                            StartCommand="{Binding StartDrawingCommand}"
+                            MoveCommand="{Binding UpdateDrawingCommand}"
+                            StopCommand="{Binding FinishDrawingCommand}" />
+                    </Interaction.Behaviors>
+                </Canvas>
+            </Grid>
+            <Grid Grid.Column="1" RowDefinitions="*,*">
+                <Border Grid.Row="0" Background="Gray" BorderBrush="White" BorderThickness="2" CornerRadius="10" Width="200" Height="100">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Label Content="Score:" HorizontalAlignment="Center"/>
+                        <Label Content="{Binding CurrentScore, StringFormat=' {0:F2} %'}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Row="1" Background="Gray" BorderBrush="White" BorderThickness="2" CornerRadius="10" Width="200" Height="100">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Label Content="high Score:" HorizontalAlignment="Center"/>
+                        <Label Content="{Binding CurrentHighScore, StringFormat=' {0:F2} %'}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>
