@@ -17,19 +17,19 @@
                     <Grid >
                         <!--Note: in hindsight i would have maybe encapsulated the following canvas with its functionality into a custom control. I learned about Behaviors this way, though-->
                         <Canvas Height="600" Background="Beige" > 
-                        <Polyline Points="{Binding Points}"
-                                  Stroke="Blue"
-                                  StrokeThickness="2" 
-                                  IsVisible="{Binding IsDrawingVisible}" />
-                        
-                        <controls:PointCollectionControl Points="{Binding ResampledPoints}" IsVisible="{Binding IsResampleVisible}" PointBrush="Red" PointSize="4" />
-                        
-                        <Interaction.Behaviors>
-                            <behaviors:CanvasDrawingHandler
-                                StartCommand="{Binding StartDrawingCommand}"
-                                MoveCommand="{Binding UpdateDrawingCommand}"
-                                StopCommand="{Binding FinishDrawingCommand}" />
-                        </Interaction.Behaviors>
+                            <Polyline Points="{Binding Points}"
+                                      Stroke="Blue"
+                                      StrokeThickness="2" 
+                                      IsVisible="{Binding IsDrawingVisible}" />
+                            
+                            <controls:PointCollectionControl Points="{Binding ResampledPoints}" IsVisible="{Binding IsResampleVisible}" PointBrush="Red" PointSize="4" />
+                            
+                            <Interaction.Behaviors>
+                                <behaviors:CanvasDrawingHandler
+                                    StartCommand="{Binding StartDrawingCommand}"
+                                    MoveCommand="{Binding UpdateDrawingCommand}"
+                                    StopCommand="{Binding FinishDrawingCommand}" />
+                            </Interaction.Behaviors>
                         </Canvas>
                     </Grid>
                     <Border BorderThickness="3" BorderBrush="Beige" Padding="10" Background="Gray" Height="190">

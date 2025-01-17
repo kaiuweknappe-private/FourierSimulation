@@ -45,12 +45,11 @@ public partial class MainWindowViewModel : ViewModelBase
             case "MainMenu": 
                 _navigationService.NavigateTo<MainMenuViewModel>();
                 break;
-            // ..
         }
     }
 
     [RelayCommand]
-    private void Exit()
+    private static void Exit()
     {
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.Shutdown();

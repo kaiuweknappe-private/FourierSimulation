@@ -17,7 +17,7 @@
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
 
-            <MenuItem Header="Edit">
+            <MenuItem Header="Edit"> <!--does nothing xD-->
                 <MenuItem Header="Undo"/>
                 <MenuItem Header="Redo"/>
             </MenuItem>

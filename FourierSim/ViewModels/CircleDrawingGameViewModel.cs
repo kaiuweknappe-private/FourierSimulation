@@ -5,7 +5,6 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FourierSim.Services;
-using Tmds.DBus.Protocol;
 
 namespace FourierSim.ViewModels;
 
@@ -58,7 +57,7 @@ public partial class CircleDrawingGameViewModel(IResamplingService resamplingSer
     private void FinishDrawing()
     {
         IsDrawing = false;
-
+        
         if (Points.Count <= 2) return;
         
         Points.Add(Points[0]);

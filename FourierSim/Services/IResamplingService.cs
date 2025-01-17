@@ -33,7 +33,7 @@ public class ResamplingService : IResamplingService
 
     }
 
-    public double CalculateTotalLength(IEnumerable<Point> points)
+    private double CalculateTotalLength(IEnumerable<Point> points)
     {
         return points.Aggregate(
             (total: 0.0, previous: points.First()),

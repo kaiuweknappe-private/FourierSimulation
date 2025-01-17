@@ -141,6 +141,7 @@ public class PhasorAnimationControl : Control
         base.Render(context);
         //background:
         context.DrawRectangle(new SolidColorBrush(Colors.Beige), null, new Rect(Bounds.Size));
+        
         if(Phasors.Count == 0) return;
         
         var currentTime = (int)((TimeFactor * _stopwatch.ElapsedMilliseconds) + TimeOffset);

@@ -18,7 +18,7 @@ public class FourierSeries : IFourierService
 {
     public Complex GetCoefficient(Dictionary<double, Point> signal, int frequency)
     {
-        var dt = signal.Skip(1).First().Key; // have to check if rounding issues occur
+        var dt = signal.Skip(1).First().Key;
         var coefficient = new Complex(0,0);
         
         //Numerical integration (riemann):

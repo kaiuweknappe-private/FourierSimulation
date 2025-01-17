@@ -9,7 +9,10 @@ using Avalonia.Media;
 
 namespace FourierSim.Controls;
 
-
+/// <summary>
+/// Basically a slider just with 2 handles so a range is selected between a LowerValue and a UpperValue.
+/// U can specify a tickInterval and a move the selection by dragging either the left or right handle or the middle (to move both). 
+/// </summary>
 public class RangeSliderControl : Control
 {
     #region Binding Properties
@@ -92,7 +95,7 @@ public class RangeSliderControl : Control
         
         var maxRange = Math.Abs(Maximum - Minimum);
         var width = Bounds.Width;
-        //handels
+        //handles
         var lowerPos = new Point((LowerValue - Minimum)/maxRange * width - 5, 10);
         _lowerHandle = new Rect(lowerPos, new Size(10, 20));
         context.DrawRectangle(Brushes.RoyalBlue, null, _lowerHandle);
@@ -167,18 +170,20 @@ public class RangeSliderControl : Control
         }
         else if (_selection == Selection.Both) //move entire thing 
         {
-            //Note: works bit clunky if u only want to move small amounts, room for improvement.. 
-            // ah i got it.. its due to the rounding if u only move small amount and set the tickinterval to 1 it always rounds down.. maybe clamp the valueDelta to Min.: TickInterval
-            if (_lastPointerPosition != null)
+            if (_lastPointerPosition.HasValue)
             {
                 var posDelta = pos.X - _lastPointerPosition.Value.X;
                 var valueDelta = posDelta / width * maxRange;
-                //valueDelta = Math.Max(valueDelta, TickInterval ?? double.NegativeInfinity);
-                LowerValue = Math.Max(Minimum, Math.Min(LowerValue + valueDelta, UpperValue));
-                UpperValue = Math.Min(Maximum, Math.Max(UpperValue + valueDelta, LowerValue));
-                _isSelectionDirty = true;
+                if (Math.Abs(valueDelta) >= TickInterval)
+                {
+                    LowerValue = Math.Max(Minimum, Math.Min(LowerValue + valueDelta, UpperValue));
+                    UpperValue = Math.Min(Maximum, Math.Max(UpperValue + valueDelta, LowerValue));
+                    _isSelectionDirty = true;
+                    _lastPointerPosition = pos;     
+                }
             }
-            _lastPointerPosition = pos;
+            else
+                _lastPointerPosition = pos;
         }
         
         //ensure TickInterval:

@@ -30,11 +30,11 @@ public class ComboBoxSelectionChangedBehavior : Behavior<ComboBox>
     public ComboBoxSelectionChangedBehavior()
     {
         //initial trigger when the command is set:
-        OnSelectionChangedCommandProperty.Changed.AddClassHandler<ComboBoxSelectionChangedBehavior>(((_, _) =>
+        OnSelectionChangedCommandProperty.Changed.AddClassHandler<ComboBoxSelectionChangedBehavior>((_, _) =>
         {
             //might exclude SelectedIndex: -1 (None)
             OnSelectionChanged(this, null);
-        }));
+        });
     }
 
     protected override void OnDetaching()

@@ -16,7 +16,6 @@ public partial class MainMenuViewModel(INavigationService navigationService) : V
             case "CircleGame": 
                 navigationService.NavigateTo<CircleDrawingGameViewModel>();
                 break;
-            // ..
         }
     }
 }

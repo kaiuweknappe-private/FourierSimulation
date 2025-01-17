@@ -5,6 +5,9 @@ using Avalonia.Xaml.Interactivity;
 
 namespace FourierSim.Behaviors;
 
+/// <summary>
+/// lets u bind commands to the Pointer /-Pressed /-Moved /-Released events of a canvas
+/// </summary>
 public class CanvasDrawingHandler : Behavior<Canvas>
 {
     public static readonly StyledProperty<ICommand?> StartCommandProperty =

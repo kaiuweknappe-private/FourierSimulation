@@ -5,11 +5,15 @@ using Avalonia.Media;
 
 namespace FourierSim.Controls;
 
+/// <summary>
+/// simply displays points. (like a polyline without the lines)
+/// </summary>
 public class PointCollectionControl : Control
 {
+    #region Bindable Properties
+    
     public static readonly StyledProperty<ObservableCollection<Point>> PointsProperty =
         AvaloniaProperty.Register<PointCollectionControl, ObservableCollection<Point>>(nameof(Points));
-
     public ObservableCollection<Point> Points
     {
         get => GetValue(PointsProperty);
@@ -18,7 +22,6 @@ public class PointCollectionControl : Control
 
     public static readonly StyledProperty<IBrush> PointBrushProperty =
         AvaloniaProperty.Register<PointCollectionControl, IBrush>(nameof(PointBrush), Brushes.Black);
-
     public IBrush PointBrush
     {
         get => GetValue(PointBrushProperty);
@@ -27,21 +30,20 @@ public class PointCollectionControl : Control
     
     public static readonly StyledProperty<IPen> PointPenProperty =
         AvaloniaProperty.Register<PointCollectionControl, IPen>(nameof(PointPen));
-
     public IPen PointPen
     {
         get => GetValue(PointPenProperty);
         set => SetValue(PointPenProperty, value);
     }
-
     public static readonly StyledProperty<double> PointSizeProperty =
         AvaloniaProperty.Register<PointCollectionControl, double>(nameof(PointSize), 5.0);
-
     public double PointSize
     {
         get => GetValue(PointSizeProperty);
         set => SetValue(PointSizeProperty, value);
     }
+    
+    #endregion
     
     public PointCollectionControl()
     {

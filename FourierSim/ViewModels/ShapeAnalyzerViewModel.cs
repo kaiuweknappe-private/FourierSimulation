@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FourierSim.Models;
@@ -26,7 +25,7 @@ public partial class ShapeAnalyzerViewModel(IResamplingService resamplingService
 
     public ObservableCollection<Point> Points { get; set; } = new();
 
-    [ObservableProperty] // to notify on reference changes as well
+    [ObservableProperty]
     private ObservableCollection<Point> resampledPoints = new();
 
     [ObservableProperty] private bool isDrawingVisible = true;
